@@ -1,7 +1,7 @@
 import { getRotationUnits, rotateMaskLeft, rotateMaskRight, TILES } from '../src/tiles';
 import { RotatingTileMixin } from '../src/sprites/RotatingTileMixin';
 import { TESSELATIONS } from '../src/tesselate';
-import { wrapRotation } from '../src/util/geometry';
+import { phaserWrapRotation, toDegrees, toRadians } from '../src/util/geometry';
 
 test('mask rotation left', () => {
 
@@ -74,7 +74,7 @@ class MockSprite {
 	}
 
 	set rotation(value) {
-		this._rotation = wrapRotation(value);
+		this._rotation = phaserWrapRotation(value);
 	}
 
 	get rotation() {
@@ -94,59 +94,214 @@ class MockDraggableTile extends RotatingTileMixin(MockSprite) {
 	}
 }
 
-const DEG90 = Math.PI / 2;
-const DEG120 = Math.PI * 2 / 3;
-const DEG180 = Math.PI;
+// function setupSprite(tesselation, spriteRotation, elementRotation) {
+// 	const tiles = TILES[tesselation.name];
+// 	const sprite = new MockDraggableTile(tiles[3], tesselation);		
+// 	sprite.rotation = spriteRotation;
+// 	const { targetRotation, tile } = sprite.matchRotation(elementRotation);
+// 	return { sprite, targetRotation, tile };
+// }
 
-function setupSprite(tesselation, spriteRotation, elementRotation) {
-	const tiles = TILES[tesselation.name];
-	const sprite = new MockDraggableTile(tiles[3], tesselation);		
-	sprite.rotation = spriteRotation;
-	const { targetRotation, tile } = sprite.matchRotation(elementRotation);
-	return { sprite, targetRotation, tile };
+class ResultTester {
+	constructor({ sprite, targetRotation, tile }) {
+		this.sprite = sprite;
+		this.targetRotation = targetRotation;
+		this.tile = tile;
+	}
+
+	mask(mask) {
+		expect(this.tile.connectionMask).toBe(mask);
+		return this;
+	}
+
+	get rotating() {
+		return this;
+	}
+
+	from(rotation) {
+		expect(toDegrees(this.sprite.rotation)).toBeCloseTo(rotation);
+		return this;
+	}
+
+	to(targetRotation) {
+		expect(toDegrees(this.targetRotation)).toBeCloseTo(targetRotation);
+		return this;
+	}
+
+}
+
+class RotationBuilder {
+	
+	constructor(tesselation) {
+		this.tesselation = tesselation;
+		this.rotation = 0;
+		this.targetRotation = 0;
+		this.connectionMask = 0;
+	}
+
+	get rotating() {
+		return this;
+	}
+
+	get with() {
+		return this;
+	}
+
+	mask(value) {
+		this.connectionMask = value;
+		return this;
+	}
+
+	from(rotation) {
+		this.rotation = toRadians(rotation);
+		return this;
+	}
+
+	to(targetRotation) {
+		this.targetRotation = toRadians(targetRotation);
+		return this;
+	}
+
+	get shouldEqual() {
+		const tiles = TILES[this.tesselation.name];
+		const sprite = new MockDraggableTile(tiles[this.connectionMask], this.tesselation);		
+		sprite.rotation = this.rotation;
+		const { targetRotation, tile } = sprite.matchRotation(this.targetRotation);
+		return new ResultTester({ sprite, targetRotation, tile });
+	}
+}
+
+function a(tesselation) {
+	return new RotationBuilder(tesselation);
 }
 
 test('draggable tile mixin squares', () => {
 	
-	{
-		const { sprite, targetRotation, tile } = setupSprite(TESSELATIONS.SQUARE, 0, 0);
-		expect(sprite.rotation).toBe(0);
-		expect(targetRotation).toBe(0);
-		expect(tile.connectionMask).toBe(0b0011);
-	}
+	const { SQUARE } = TESSELATIONS;
 
-	{
-		const { sprite, targetRotation, tile } = setupSprite(TESSELATIONS.SQUARE, DEG90, 0);
-		expect(sprite.rotation).toBe(0);
-		expect(targetRotation).toBe(0);
-		expect(tile.connectionMask).toBe(0b0110);
-	}
+	a(SQUARE)  .with.mask(0b0011).rotating.from(-180).to(0)
+		.shouldEqual.mask(0b1100).rotating.from(0).to(0);
 
-	{
-		const { sprite, targetRotation, tile } = setupSprite(TESSELATIONS.SQUARE, -DEG90, 0);
-		expect(sprite.rotation).toBe(0);
-		expect(targetRotation).toBe(0);
-		expect(tile.connectionMask).toBe(0b1001);
-	}
+	a(SQUARE).with.mask(0b0011).rotating.from(-90).to(0)
+		.shouldEqual.mask(0b1001).rotating.from(0).to(0);
 
-	/*
-	TODO: fails still...
-	{
-		const { sprite, targetRotation, tile } = setupSprite(TESSELATIONS.SQUARE, -DEG180, 0);
-		expect(sprite.rotation).toBe(0);
-		expect(targetRotation).toBe(0);
-		expect(tile.connectionMask).toBe(0b1100);
-	}
-	*/
+	a(SQUARE).with.mask(0b0011).rotating.from(0).to(0)
+		.shouldEqual.mask(0b0011).rotating.from(0).to(0);
 
-	/*
-	TODO: fails still...
-	{
-		const { sprite, targetRotation, tile } = setupSprite(TESSELATIONS.SQUARE, DEG180, 0);
-		expect(sprite.rotation).toBe(0);
-		expect(targetRotation).toBe(0);
-		expect(tile.connectionMask).toBe(0b1100);
-	}
-	*/ 
+	a(SQUARE).with.mask(0b0011).rotating.from(90).to(0)
+		.shouldEqual.mask(0b0110).rotating.from(0).to(0);
+
+	a(SQUARE)  .with.mask(0b0011).rotating.from(180).to(0)
+		.shouldEqual.mask(0b1100).rotating.from(0).to(0);
 
 });
+
+
+test('draggable tile mixin triangular', () => {
+	
+	const { TRIANGULAR } = TESSELATIONS;
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(-180).to(0)
+		.shouldEqual.mask(0b110).rotating.from(60).to(0);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(-120).to(0)
+		.shouldEqual.mask(0b101).rotating.from(0).to(0);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(-60).to(0)
+		.shouldEqual.mask(0b011).rotating.from(-60).to(0);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(0).to(0)
+		.shouldEqual.mask(0b011).rotating.from(0).to(0);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(60).to(0)
+		.shouldEqual.mask(0b011).rotating.from(60).to(0);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(120).to(0)
+		.shouldEqual.mask(0b110).rotating.from(0).to(0);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(180).to(0)
+		.shouldEqual.mask(0b110).rotating.from(60).to(0);
+
+
+	///////////////////////////////////////////////////////
+
+	//TODO
+	a(TRIANGULAR).with.mask(0b011).rotating.from(-180).to(180)
+		.shouldEqual.mask(0b011).rotating.from(-180).to(-180);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(-120).to(180)
+		.shouldEqual.mask(0b011).rotating.from(-120).to(-180);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(-60).to(180)
+		.shouldEqual.mask(0b110).rotating.from(-180).to(-180);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(0).to(180)
+		.shouldEqual.mask(0b110).rotating.from(-120).to(-180);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(60).to(180)
+		.shouldEqual.mask(0b101).rotating.from(180).to(180);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(120).to(180)
+		.shouldEqual.mask(0b011).rotating.from(120).to(180);
+
+	a(TRIANGULAR).with.mask(0b011).rotating.from(180).to(180)
+		.shouldEqual.mask(0b011).rotating.from(-180).to(-180);
+
+});
+
+test('draggable tile mixin hexagon', () => {
+	
+	const { HEXAGONAL } = TESSELATIONS;
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(-180).to(0)
+		.shouldEqual.mask(0b011000).rotating.from(0).to(0);
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(-120).to(0)
+		.shouldEqual.mask(0b110000).rotating.from(0).to(0);
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(-60).to(0)
+		.shouldEqual.mask(0b100001).rotating.from(0).to(0);
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(0).to(0)
+		.shouldEqual.mask(0b000011).rotating.from(0).to(0);
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(60).to(0)
+		.shouldEqual.mask(0b000110).rotating.from(0).to(0);
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(120).to(0)
+		.shouldEqual.mask(0b001100).rotating.from(0).to(0);
+
+	a(HEXAGONAL).with.mask(0b000011).rotating.from(180).to(0)
+		.shouldEqual.mask(0b011000).rotating.from(0).to(0);
+
+});
+
+
+test('draggable tile mixin cairo', () => {
+	
+	const { CAIRO } = TESSELATIONS;
+
+	a(CAIRO).with.mask(0b00011).rotating.from(0).to(0)
+		.shouldEqual.mask(0b00011).rotating.from(0).to(0);
+
+	a(CAIRO).with.mask(0b00011).rotating.from(90).to(0)
+		.shouldEqual.mask(0b00011).rotating.from(90).to(0);
+
+	a(CAIRO).with.mask(0b00011).rotating.from(90).to(90)
+		.shouldEqual.mask(0b00011).rotating.from(90).to(90);
+
+});
+
+
+test('draggable tile mixin diamond', () => {
+	
+	const { DIAMOND } = TESSELATIONS;
+
+	a(DIAMOND) .with.mask(0b0011).rotating.from(0).to(0)
+		.shouldEqual.mask(0b0011).rotating.from(0).to(0);
+
+	a(DIAMOND) .with.mask(0b0011).rotating.from(0).to(120)
+		.shouldEqual.mask(0b1100).rotating.from(-180).to(-240);
+
+});
+

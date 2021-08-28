@@ -12,13 +12,43 @@ export function centerOfMass(points : Point[]) : Point {
 
 export const TWO_PI = Math.PI * 2;
 
-function wrap(value : number, min : number, max : number) {
+
+export const toDegrees = (n) => Math.round(n * 180 / Math.PI);
+export const toRadians = (n) => n * Math.PI / 180;
+
+export function clamp(value : number, min : number, max : number) {
 	const range = max - min;
-	return (min + ((value - min) % range));
+	let result = value;
+	while (result < min) {
+		result += range;
+	}
+	while (result > max) {
+		result -= range;
+	}
+	return result;
 }
-/** like Phaser function of same name */
-export function wrapRotation(rotation: number) {
-	return wrap(rotation, -Math.PI, Math.PI);
+
+export function clampRotation(rotation: number) {
+	return clamp(rotation, -Math.PI, Math.PI);
+}
+
+/* Phaser annoyance!
+	Phaser uses the
+	following expression to wrap rotation:
+
+	(min + (((value - min) % range)) + range) % range;
+	
+	which is only correct for values between ~~ -4 pi to +4 pi.
+*/
+/** 
+ * like Phaser wrap function. Subtly different from clamp, so beware... 
+ * Implemented here for unit testing.
+ **/
+export function phaserWrapRotation(value: number) {
+	const min = -Math.PI;
+	const max = Math.PI;
+	const range = max - min;
+	return (min + ((((value - min) % range) + range) % range));
 }
 
 export function length(point : Point) {

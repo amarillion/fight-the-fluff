@@ -1,6 +1,6 @@
 import { TesselationType } from '../tesselate';
 import { Tile, TILES, rotateMaskLeft, rotateMaskRight } from '../tiles';
-import { TWO_PI, wrapRotation } from '../util/geometry';
+import { toDegrees, TWO_PI, clampRotation, phaserWrapRotation } from '../util/geometry';
 
 type Constructor<T = Record<string, unknown>> = new (...args: any[]) => T;
 
@@ -50,7 +50,6 @@ export function RotatingTileMixin<TBase extends Constructor<Rotatable>>(Base: TB
 				connectionMask = rotateMaskRight(connectionMask, symmetryUnit, sides);
 				currentRotation += symmetryAngle;
 			}
-			// console.log('reducing angle', angle(before), '->', angle(currentRotation), angleUnit);
 			
 			// replace tile and texture
 			this.rotation = currentRotation;
@@ -60,40 +59,37 @@ export function RotatingTileMixin<TBase extends Constructor<Rotatable>>(Base: TB
 
 
 		matchRotation(elementRotation : number) {
-			const angle = x => Math.round(x * 360 / (TWO_PI));
-
 			// round rotation to nearest unit angle...
 			const symmetryAngle = TWO_PI / this.#tesselation.symmetry;
-
-			const targetRotation = wrapRotation(elementRotation);
-			const before = this.rotation;
+			let targetRotation = elementRotation;
 			
-			const deltaRotation = () => wrapRotation(targetRotation - this.rotation); 
+			const deltaRotation = () => phaserWrapRotation(targetRotation - this.rotation); 
 			
 			// converting to angle to round off, and avoid float equality problems
 			// where the angle should be 0 but in reality it's 1e-16.
 			let it = 0;
-			while (angle(deltaRotation()) > angle(symmetryAngle / 2)) {
-				console.log('rotate left', angle(deltaRotation()), angle(symmetryAngle / 2));
+			while (toDegrees(deltaRotation()) > toDegrees(symmetryAngle / 2)) {
 				this.rotateContents(+1);
 				if(it++ > 6) throw new Error('Infinite loop detected');
 			}
 
 			it = 0;
-			while (angle(deltaRotation()) < angle(-symmetryAngle / 2)) {
-				console.log('rotate right', angle(deltaRotation()), angle(-symmetryAngle / 2));
+			while (toDegrees(deltaRotation()) < toDegrees(-symmetryAngle / 2)) {
 				this.rotateContents(-1);
 				//TODO: this can get in an infinite loop if elementRotation is +180 and targetRotation = -180
 				if(it++ > 6) throw new Error('Infinite loop detected');
 			}
 
-			console.log('before', {
-				before: angle(before),
-				after: angle(this.rotation),
-				elementRotation: angle(elementRotation),
-				targetRotation: angle(targetRotation),
-				symmetryAngle: angle(symmetryAngle),
-			});
+			// limit rotation to smallest part of circle
+			// we can't adjust this.rotation, because it's automatically wrapped
+			// so we have to change the targetRotation instead.
+			if (targetRotation - this.rotation > Math.PI) {
+				targetRotation -= TWO_PI; 
+			}
+
+			if (targetRotation - this.rotation < -Math.PI) {
+				targetRotation += TWO_PI; 
+			}
 			
 			return { targetRotation, tile: this.#tile };
 		}
