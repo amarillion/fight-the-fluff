@@ -1,7 +1,8 @@
-import { TesselationType } from '../tesselate';
-import { Tile, TILES, rotateMaskLeft, rotateMaskRight } from '../tiles';
-import { toDegrees, TWO_PI, clampRotation, phaserWrapRotation } from '../util/geometry';
+import { TesselationType } from '../tesselate.js';
+import { Tile, TILES, rotateMaskLeft, rotateMaskRight } from '../tiles.js';
+import { toDegrees, TWO_PI, phaserWrapRotation } from '../util/geometry.js';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T = Record<string, unknown>> = new (...args: any[]) => T;
 
 interface Rotatable {

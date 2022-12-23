@@ -1,8 +1,8 @@
 import { Stream } from '@amarillion/helixgraph/lib/iterableUtils.js';
 import { pickOne } from '@amarillion/helixgraph/lib/random.js';
-import { ActionType, MapSprite } from './MapSprite';
-import { Node } from '../grid';
-import { Point } from '../util/geometry';
+import { ActionType, MapSprite } from './MapSprite.js';
+import { Node } from '../grid.js';
+import { Point } from '../util/geometry.js';
 
 const STEPS = 40;
 

@@ -1,5 +1,5 @@
-import { TESSELATIONS } from './tesselate';
-import { Point } from './util/geometry';
+import { TESSELATIONS } from './tesselate.js';
+import { Point } from './util/geometry.js';
 
 export class Tile {
 	resKey: string;
@@ -9,7 +9,7 @@ export class Tile {
 	origin: Point;
 
 	/* center of mass */
-	center: Point
+	center: Point;
 
 	constructor(connectionMask: number) {
 		this.connectionMask = connectionMask;

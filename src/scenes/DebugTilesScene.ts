@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import { SCREENW } from '../constants';
-import { drawTiles } from '../drawTiles';
-import { TILES } from '../tiles';
+import { SCREENW } from '../constants.js';
+import { drawTiles } from '../drawTiles.js';
+import { TILES } from '../tiles.js';
 
 export class DebugTilesScene extends Phaser.Scene {
 

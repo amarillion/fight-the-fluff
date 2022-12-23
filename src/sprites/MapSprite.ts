@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
-import { Node } from '../grid';
+import { Node } from '../grid.js';
 import { Stream } from '@amarillion/helixgraph/lib/iterableUtils.js';
-import { Game } from '../scenes/Game';
-import { Point } from '../util/geometry';
+import { Game } from '../scenes/Game.js';
+import { Point } from '../util/geometry.js';
 
 const STEPS = 40;
 

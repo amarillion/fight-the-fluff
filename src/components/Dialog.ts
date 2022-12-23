@@ -1,5 +1,7 @@
 class Dialog extends HTMLElement {
 
+	callback: (evt: MouseEvent) => void; 
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
@@ -113,7 +115,7 @@ class Dialog extends HTMLElement {
 customElements.define('helix-dialog', Dialog);
 
 export function openDialog(contentsHtml, callback = () => {}) {
-	const dialog = document.createElement('helix-dialog');
+	const dialog = document.createElement('helix-dialog') as Dialog;
 	dialog.innerHTML = contentsHtml;
 	dialog.callback = callback;
 	document.body.appendChild(dialog);

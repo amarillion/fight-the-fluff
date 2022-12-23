@@ -1,8 +1,8 @@
 import { TemplateGrid } from '@amarillion/helixgraph/lib/BaseGrid.js';
 import {scale, rotate, translate, transform, applyToPoints } from 'transformation-matrix';
-import { Tile } from './tiles';
-import { PrimitiveUnitPart, TesselationType } from './tesselate';
-import { Point } from './util/geometry';
+import { Tile } from './tiles.js';
+import { PrimitiveUnitPart, TesselationType } from './tesselate.js';
+import { Point } from './util/geometry.js';
 
 export class Node {
 	mx: number;

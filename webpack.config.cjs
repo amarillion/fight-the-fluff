@@ -1,13 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ResolveTypeScriptPlugin = require('resolve-typescript-plugin');
 const webpack = require("webpack");
 const resolve = dir => path.resolve(__dirname, dir);
 
 const config = {
 	entry: {
 		// where webpack starts to build the bundle. All other deps are imported from here.
-		app: resolve("./src/main.js"),
+		app: resolve("./src/main"),
 		vendor: ['phaser']
 	},
 	output: {
@@ -41,6 +42,7 @@ const config = {
 	},
 	resolve: {
 		extensions: ['.ts', '.js'],
+		plugins: [new ResolveTypeScriptPlugin()]
 	},
 	optimization: {
 		splitChunks: {

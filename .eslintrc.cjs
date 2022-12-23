@@ -13,6 +13,7 @@ module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: [
 		'@typescript-eslint',
+		'import'
 	],
 	parserOptions: {
 		'sourceType': 'module',
@@ -32,5 +33,6 @@ module.exports = {
 		'eol-last': ['error', 'always'],
 		'@typescript-eslint/explicit-module-boundary-types': ['off'],
 		'@typescript-eslint/no-empty-function': ['off'],
+		'import/extensions': ['error', 'always'],
 	},
 };

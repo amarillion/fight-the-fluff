@@ -1,7 +1,24 @@
+import Phaser from 'phaser';
+
 export class ProgressBar {
-	
-	constructor({ scene, layer, x, y, w, h, value = 0, max = 1.0 }) {
-		this.graphics = scene.make.graphics();
+
+	graphics: Phaser.GameObjects.Graphics;
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+
+	constructor(
+		{ 
+			scene, layer, x, y, w, h, value = 0, max = 1.0
+		} : { 
+			scene: Phaser.Scene, 
+			layer: Phaser.GameObjects.Layer, 
+			x: number, y: number, w: number, h: number, 
+			value?: number, max?: number 
+		}
+	) {
+		this.graphics = scene.make.graphics({});
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -10,7 +27,7 @@ export class ProgressBar {
 		layer.add(this.graphics);
 	}
 
-	refresh(value, max) {
+	refresh(value: number, max: number) {
 		this.graphics.clear();
 
 		this.graphics.fillStyle(0x808080, 0.5);

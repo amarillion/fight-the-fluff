@@ -1,4 +1,4 @@
-import { TESSELATIONS } from './tesselate';
+import { TESSELATIONS } from './tesselate.js';
 
 export const LEVELDATA = [
 

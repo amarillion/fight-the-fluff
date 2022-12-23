@@ -1,21 +1,21 @@
-import { Grid, Node } from '../grid';
+import { Grid, Node } from '../grid.js';
 import Phaser from 'phaser';
 import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { assert } from '@amarillion/helixgraph/lib/assert.js';
 import { trackbackNodes } from '@amarillion/helixgraph/lib/pathFinding.js';
 import { breadthFirstSearch } from '@amarillion/helixgraph';
 
-import { Fluff } from '../sprites/Fluff';
-import { Banana } from '../sprites/Banana';
-import { TESSELATIONS, TesselationType } from '../tesselate';
-import { TILES, Tile } from '../tiles';
-import { drawTiles } from '../drawTiles';
+import { Fluff } from '../sprites/Fluff.js';
+import { Banana } from '../sprites/Banana.js';
+import { TESSELATIONS, TesselationType } from '../tesselate.js';
+import { TILES, Tile } from '../tiles.js';
+import { drawTiles } from '../drawTiles.js';
 import { MAX_SCORE, SCALE, SCREENH, SCREENW } from '../constants.js';
-import { ProgressBar } from '../sprites/progress-bar';
-import DraggableTile, { Draggable } from '../sprites/DraggableTile';
-import { openDialog } from '../components/Dialog';
-import { LEVELDATA } from '../levels';
-import { Point } from '../util/geometry';
+import { ProgressBar } from '../sprites/progress-bar.js';
+import DraggableTile, { Draggable } from '../sprites/DraggableTile.js';
+import { openDialog } from '../components/Dialog.js';
+import { LEVELDATA } from '../levels.js';
+import { Point } from '../util/geometry.js';
 
 const CONTROL_SIZE = 120;
 const BAR_W = 100;

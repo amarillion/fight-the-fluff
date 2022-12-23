@@ -1,12 +1,12 @@
 import Phaser from 'phaser';
 
 import BootScene from './scenes/Boot.js';
-import { Game as GameScene } from './scenes/Game.ts';
+import { Game as GameScene } from './scenes/Game.js';
 import { MenuScene } from './scenes/menu.js';
 import { MenuComponent } from './components/menuComponent.js';
 
 import { SCREENH, SCREENW } from './constants.js';
-import { DebugTilesScene } from './scenes/DebugTilesScene.ts';
+import { DebugTilesScene } from './scenes/DebugTilesScene.js';
 
 const config = {
 	type: Phaser.AUTO,
@@ -40,4 +40,4 @@ class Game extends Phaser.Game {
 
 customElements.define('game-menu', MenuComponent);
 
-window.game = new Game();
+export const game = new Game();

@@ -76,7 +76,7 @@ export class MenuComponent extends HTMLElement {
 		});
 
 		this.shadowRoot.querySelector('#fullScreen').addEventListener('click', () => {
-			let elem = document.documentElement;
+			const elem = document.documentElement;
 
 			elem.requestFullscreen({ navigationUI: 'show' }).then(() => { }).catch(err => {
 				alert(`An error occurred while trying to switch into full-screen mode: ${err.message} (${err.name})`);
