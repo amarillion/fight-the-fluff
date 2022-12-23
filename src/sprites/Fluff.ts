@@ -9,7 +9,7 @@ const STEPS = 40;
 export class Fluff extends MapSprite {
 	
 
-	constructor ({ scene, node }) {
+	constructor ({ scene, node } : { scene: Phaser.Scene, node: Node }) {
 		super({ scene, node, asset: 'fluff-spritesheet' });
 		this.play('fluff');
 	}

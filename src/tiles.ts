@@ -20,7 +20,7 @@ export class Tile {
 }
 
 function _initTiles() {
-	const result = {};
+	const result: Record<string, Tile[]> = {};
 	for (const tesselation of Object.values(TESSELATIONS)) {
 		result[tesselation.name] = [];
 		for (let i = 0; i < Math.pow(2, tesselation.sides); ++i) {

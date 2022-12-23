@@ -6,7 +6,7 @@ import { SCALE } from './constants.js';
 import { centerOfMass, Point } from './util/geometry.js';
 import { Tile, TILES } from './tiles.js';
 
-export function drawTiles(scene) {
+export function drawTiles(scene: Phaser.Scene) {
 	for (const tesselation of Object.values(TESSELATIONS)) {
 		for (const tile of TILES[tesselation.name]) {
 			drawTile(tile, scene, tesselation);
@@ -23,7 +23,7 @@ function boundingBox(points : Point[]) {
 	};
 }
 
-function drawTile(tile : Tile, scene, tesselation) {
+function drawTile(tile : Tile, scene: Phaser.Scene, tesselation: TesselationType) {
 	const connectionMask = tile.connectionMask;
 	const resKey = `tile-${tesselation.name}-${connectionMask}`;
 	const graphics = scene.make.graphics({ x: 0, y: 0, add: false });
@@ -46,7 +46,11 @@ function drawTile(tile : Tile, scene, tesselation) {
 	tile.center = { x: ox + (cc.x * SCALE), y: oy + (cc.y * SCALE) };
 }
 
-function renderTile(graphics, ox, oy, tesselation : TesselationType, connectionMask, fillColor, outlineColor, pathColor) {
+function renderTile(
+	graphics: Phaser.GameObjects.Graphics, 
+	ox: number, oy: number, tesselation: TesselationType, 
+	connectionMask: number, fillColor: number, outlineColor: number, pathColor: number
+) {
 	const { points, links, primitiveUnit, unitSize } = tesselation;
 	const cc = centerOfMass(points);
 	

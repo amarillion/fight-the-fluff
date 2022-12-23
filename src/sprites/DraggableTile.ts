@@ -35,7 +35,7 @@ export default class extends RotatingTileMixin(Phaser.GameObjects.Sprite) {
 		// keep track of speed?
 	}
 
-	dragStart(pointer) {
+	dragStart(pointer: Phaser.Input.Pointer) {
 		this.grabPoint = {
 			x : pointer.x - this.x,
 			y : pointer.y - this.y

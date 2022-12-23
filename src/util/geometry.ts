@@ -13,8 +13,8 @@ export function centerOfMass(points : Point[]) : Point {
 export const TWO_PI = Math.PI * 2;
 
 
-export const toDegrees = (n) => Math.round(n * 180 / Math.PI);
-export const toRadians = (n) => n * Math.PI / 180;
+export const toDegrees = (n: number) => Math.round(n * 180 / Math.PI);
+export const toRadians = (n: number) => n * Math.PI / 180;
 
 export function clamp(value : number, min : number, max : number) {
 	const range = max - min;

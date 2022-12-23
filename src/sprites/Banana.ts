@@ -2,12 +2,13 @@ import { Stream } from '@amarillion/helixgraph/lib/iterableUtils.js';
 import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { ActionType, MapSprite } from './MapSprite.js';
 import { Node } from '../grid.js';
+import { Game } from '../scenes/Game.js';
 
 const STEPS = 40;
 
 export class Banana extends MapSprite {
 	
-	constructor ({ scene, node }) {
+	constructor ({ scene, node } : { scene: Game, node: Node }) {
 		super({ scene, node, asset: 'banana-spritesheet' });
 		this.play('banana');
 		this.solution = scene.solution && scene.solution.slice(1);

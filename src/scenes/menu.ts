@@ -5,7 +5,9 @@ import { MenuComponent } from '../components/menuComponent.js';
 	Adds an event listener on a DOM element, and returns a function that
 	removes it again when called.
 */
-export function registerEventListener(elt, type, func, capture = false) {
+export function registerEventListener(
+	elt: HTMLElement, type: string, func: EventListenerOrEventListenerObject, capture = false
+) {
 	elt.addEventListener(type, func, capture);
 	return () => {
 		elt.removeEventListener(type, func, capture);

@@ -17,7 +17,7 @@ class Path {
 	dest: Node;
 	fraction: number;
 	
-	constructor(src, dest) {
+	constructor(src: Node, dest: Node) {
 		this.src = src;
 		this.dest = dest;
 		this.fraction = 0;
@@ -61,7 +61,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 	actionCounter: number;
 	path: Path;
 
-	constructor ({ scene, node, asset }) {
+	constructor ({ scene, node, asset }: { scene: Phaser.Scene, node: Node, asset: string }) {
 		super(scene, node.cx, node.cy, asset);
 		
 		this.node = node;
@@ -139,7 +139,7 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 		};
 	}
 
-	preUpdate(time, delta) {
+	preUpdate(time: number, delta: number) {
 		super.preUpdate(time, delta);
 
 		if (!this.action) {

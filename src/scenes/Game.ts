@@ -1,4 +1,4 @@
-import { Grid, Node } from '../grid.js';
+import { Grid, Node, Unit } from '../grid.js';
 import Phaser from 'phaser';
 import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { assert } from '@amarillion/helixgraph/lib/assert.js';
@@ -22,7 +22,7 @@ const BAR_W = 100;
 const BAR_H = 50;
 const MARGIN = 5;
 
-function initGrid(tesselation) {
+function initGrid(tesselation: TesselationType) {
 	const { unitSize, links } = tesselation;
 	
 	const mw = Math.ceil(SCREENW / SCALE / unitSize[0]);
@@ -57,7 +57,7 @@ export class Game extends Phaser.Scene {
 	// init () {}
 	// preload () {}
 
-	debugPrimaryUnitRectangle(unit) {
+	debugPrimaryUnitRectangle(unit: Unit) {
 		// render primary unit rectangle
 		const rect = new Phaser.GameObjects.Rectangle(
 			this, unit.xco, unit.yco, unit.unitSize[0] * SCALE, unit.unitSize[1] * SCALE
@@ -70,7 +70,7 @@ export class Game extends Phaser.Scene {
 		console.log({ xco: unit.xco, yco: unit.yco, w: unit.unitSize[0], h: unit.unitSize[1], rect });
 	}
 
-	renderPolygons(grid) {
+	renderPolygons(grid: Grid) {
 
 		for (const unit of grid.eachNode()) {
 
@@ -246,7 +246,7 @@ export class Game extends Phaser.Scene {
 		}
 	}
 
-	debugAdjacent(node) {
+	debugAdjacent(node: Node) {
 		node.delegate.isFilled = true;
 		let i = 0;
 		for (const [ , adjacent ] of Node.getAdjacent(node)) {
@@ -298,7 +298,7 @@ export class Game extends Phaser.Scene {
 		while (this.fluffs.children.size < minimum);
 	}
 
-	findNodeAt(xco, yco) {
+	findNodeAt(xco: number, yco: number) {
 		// TODO: check bounding box of unit as speed optimization...
 		for (const unit of this.grid.eachNode()) {
 			for (const node of unit.nodes) {
@@ -383,7 +383,7 @@ export class Game extends Phaser.Scene {
 	
 		this.initLevel();
 		
-		this.input.on('pointerdown', (pointer) => {
+		this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
 			/*
 			const node = this.findNodeAt(pointer.x, pointer.y);
 			if (node && !node.tile) {
@@ -395,8 +395,8 @@ export class Game extends Phaser.Scene {
 			*/
 			this.onDown(pointer);
 		});
-		this.input.on('pointermove', (pointer) => this.onMove(pointer));
-		this.input.on('pointerup', (pointer) => this.onRelease(pointer));
+		this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => this.onMove(pointer));
+		this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => this.onRelease(pointer));
 		
 		// Phaser annoyance: gameout is weird, gameover is weirder.
 		// Who thought of naming the event when a pointer enters the game screen 'gameover'???
@@ -423,7 +423,7 @@ export class Game extends Phaser.Scene {
 		return result;
 	}
 
-	onDown(pointer) {
+	onDown(pointer: Phaser.Input.Pointer) {
 		if (this.uiBlocked) { return; }
 
 		const contains = this.controlContains(pointer);
@@ -457,7 +457,7 @@ export class Game extends Phaser.Scene {
 		}
 	}
 
-	onMove(pointer) {
+	onMove(pointer: Phaser.Input.Pointer) {
 		if (this.uiBlocked) { return; }
 
 		if (this.dragTarget) {
@@ -472,7 +472,7 @@ export class Game extends Phaser.Scene {
 		
 	}
 
-	onRelease(pointer) {
+	onRelease(pointer: Phaser.Input.Pointer) {
 		if (this.uiBlocked) { return; }
 
 		if (!this.dragTarget) return;

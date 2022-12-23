@@ -43,7 +43,7 @@ export class DebugTilesScene extends Phaser.Scene {
 	
 		}
 	
-		this.input.on('pointermove', (pointer) => {
+		this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
 			console.log(pointer);
 		});
 	}

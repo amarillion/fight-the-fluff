@@ -114,7 +114,7 @@ class Dialog extends HTMLElement {
 
 customElements.define('helix-dialog', Dialog);
 
-export function openDialog(contentsHtml, callback = () => {}) {
+export function openDialog(contentsHtml: string, callback = () => {}) {
 	const dialog = document.createElement('helix-dialog') as Dialog;
 	dialog.innerHTML = contentsHtml;
 	dialog.callback = callback;

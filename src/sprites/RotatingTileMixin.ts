@@ -7,7 +7,7 @@ type Constructor<T = Record<string, unknown>> = new (...args: any[]) => T;
 
 interface Rotatable {
 	rotation: number;
-	setTexture(resKey : string);
+	setTexture(resKey : string): void;
 }
 
 export function RotatingTileMixin<TBase extends Constructor<Rotatable>>(Base: TBase) {
@@ -23,7 +23,7 @@ export function RotatingTileMixin<TBase extends Constructor<Rotatable>>(Base: TB
 		Extending the constructor itself is possible but tricky
 		https://github.com/Microsoft/TypeScript/issues/14126
 		*/
-		initTile(tile, tesselation) {
+		initTile(tile: Tile, tesselation: TesselationType) {
 			this.#tile = tile;
 			this.#tileSet = TILES[tesselation.name];
 			this.#tesselation = tesselation;

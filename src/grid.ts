@@ -17,11 +17,15 @@ export class Node {
 	cy: number;
 	element: PrimitiveUnitPart;
 	links: Node[];
-	delegate: unknown;
+	delegate: { isFilled: boolean };
 	tile: Tile;
 	tileImg: unknown;
 
-	constructor(mx, my, idx, xco, yco, element, points : Point[], SCALE) {
+	constructor(
+		mx: number, my: number, idx: number, 
+		xco: number, yco: number, element: PrimitiveUnitPart, 
+		points : Point[], SCALE: number
+	) {
 		this.mx = mx;
 		this.my = my;
 		this.idx = idx;
@@ -84,18 +88,21 @@ export class Unit {
 	yco: number;
 	unitSize: [number, number];
 
-	constructor(x, y, grid) {
+	constructor(x: number, y: number, grid: Grid) {
 		this.x = x;
 		this.y = y;
 		this.grid = grid;
 		this.nodes = [];
 	}
 
-	push(node) {
+	push(node: Node) {
 		this.nodes.push(node);
 	}
 
-	addPrimitiveUnit(mx, my, secondX, secondY, tesselation : TesselationType, SCALE) {
+	addPrimitiveUnit(
+		mx: number, my: number, secondX: number, secondY: number, 
+		tesselation : TesselationType, SCALE: number
+	) {
 		const { primitiveUnit, unitSize, points } = tesselation;
 		let idx = 0;
 		for (const element of primitiveUnit) {
@@ -118,11 +125,11 @@ export class Unit {
 
 export class Grid extends TemplateGrid<Unit> {
 	
-	constructor(w, h) {
-		super(w, h, (x, y, grid) => new Unit(x, y, grid));
+	constructor(w: number, h: number) {
+		super(w, h, (x, y, grid: Grid) => new Unit(x, y, grid));
 	}
 
-	initLinks(linksTemplate) {
+	initLinks(linksTemplate: { dx: number, dy: number, idx: number }[][]) {
 		
 		for (const unit of this.eachNode()) {
 			const mx = unit.x;
