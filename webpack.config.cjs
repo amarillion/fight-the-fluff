@@ -50,9 +50,8 @@ const config = {
 
 	devServer: {
 		/** following two lines allow (less-secure) access from the Local network. */
-		disableHostCheck: true,
+		allowedHosts: "all",
 		host: "0.0.0.0",
-		watchContentBase: true,
 	}
 };
 
