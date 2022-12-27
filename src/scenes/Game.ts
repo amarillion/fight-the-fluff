@@ -14,8 +14,10 @@ import { MAX_SCORE, SCALE, SCREENH, SCREENW } from '../constants.js';
 import { ProgressBar } from '../sprites/progress-bar.js';
 import DraggableTile, { Draggable } from '../sprites/DraggableTile.js';
 import { openDialog } from '../components/Dialog.js';
-import { LEVELDATA } from '../levels.js';
+import { LEVELDATA, LevelDataType } from '../levels.js';
 import { Point } from '../util/geometry.js';
+import { Tower } from '../sprites/Tower.js';
+import { StartGate } from '../sprites/StartGate.js';
 
 const CONTROL_SIZE = 120;
 const BAR_W = 100;
@@ -106,6 +108,8 @@ export class Game extends Phaser.Scene {
 	tileLayer: Phaser.GameObjects.Layer;
 	uiLayer: Phaser.GameObjects.Layer;
 	fluffs: Phaser.GameObjects.Group;
+	bananas: Phaser.GameObjects.Group;
+	bullets: Phaser.GameObjects.Group;
 
 	score: number;
 	level: number;
@@ -122,16 +126,15 @@ export class Game extends Phaser.Scene {
 	uiBlocked: boolean;
 	tesselation: TesselationType;
 
-	initGates() {
+	initGates(levelData: LevelDataType) {
 		this.startNode = this.findNodeAt(150, 150);
 		this.setTile(this.startNode, this.tileSet[this.tileSet.length - 1]);
-		
-		const c1 = new Phaser.GameObjects.Sprite(this, this.startNode.cx, this.startNode.cy, 'startgate');
+		const c1 = new StartGate(this, this.startNode);
 		this.spriteLayer.add(c1);
 
 		this.endNode = this.findNodeAt(SCREENW - 150, SCREENH - 150);
 		this.setTile(this.endNode, this.tileSet[this.tileSet.length - 1]);
-		const c2 = new Phaser.GameObjects.Sprite(this, this.endNode.cx, this.endNode.cy, 'endgate');
+		const c2 = new Tower(this, this.endNode);
 		this.spriteLayer.add(c2);
 	}
 
@@ -200,7 +203,10 @@ export class Game extends Phaser.Scene {
 		this.uiLayer.setDepth(3);
 		
 		this.fluffs = this.add.group();
+		this.bananas = this.add.group();
+		this.bullets = this.add.group();
 
+		this.physics.overlap(this.fluffs, this.bullets, this.onBulletFluffOverlap, null, this);
 		this.score = 0;
 		const levelData = LEVELDATA[this.level % LEVELDATA.length];
 		this.tesselation = TESSELATIONS[levelData.tesselation];
@@ -211,7 +217,7 @@ export class Game extends Phaser.Scene {
 		this.tileSet = TILES[this.tesselation.name];
 		this.noDeadEnds = this.tileSet.filter(tile => !(tile.connectionMask in {0:0, 1:1, 2:2, 4:4, 8:8, 16:16, 32:32, 64:64}));
 
-		this.initGates();
+		this.initGates(levelData);
 
 		this.initUI();
 
@@ -227,6 +233,10 @@ export class Game extends Phaser.Scene {
 			});
 		}
 
+	}
+
+	onBulletFluffOverlap(...args: unknown[]) {
+		console.log('OVERLAP!', args);
 	}
 
 	endReached() {
@@ -267,10 +277,10 @@ export class Game extends Phaser.Scene {
 			node: this.startNode,
 		};
 		const sprite = new Banana(config);
+		this.bananas.add(sprite);
 		this.spriteLayer.add(sprite);
-		
-		
-		
+		this.physics.add.existing(sprite);
+
 		this.spawnFluff();
 	}
 
@@ -291,9 +301,7 @@ export class Game extends Phaser.Scene {
 				const sprite = new Fluff({scene: this, node});
 				this.spriteLayer.add(sprite);
 				this.fluffs.add(sprite);
-				console.log('Added fluff', this.fluffs.children.size);
 			}
-			// }
 		}
 		while (this.fluffs.children.size < minimum);
 	}
@@ -357,6 +365,10 @@ export class Game extends Phaser.Scene {
 		if (this.solution) {
 			console.log(this.solution);
 		}
+	}
+
+	preUpdate() {
+		
 	}
 
 	updateNextTile() {

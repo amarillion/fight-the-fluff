@@ -1,6 +1,11 @@
 import { TESSELATIONS } from './tesselate.js';
 
-export const LEVELDATA = [
+export type LevelDataType = {
+	dialog: string;
+	tesselation: string;
+}
+
+export const LEVELDATA: LevelDataType[] = [
 
 	{ // 0
 		dialog: `

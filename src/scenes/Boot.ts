@@ -13,6 +13,7 @@ export default class extends Phaser.Scene {
 		this.load.spritesheet('fluff-spritesheet', './assets/images/Fluff_front1.png', { frameWidth: 24 });
 		this.load.image('startgate', './assets/images/BananaBox.png');
 		this.load.image('endgate', './assets/images/Ship.png');
+		this.load.image('projectile', './assets/images/projectile.png');
 		this.load.audio('music', ['./assets/music/march_of_the_fluff.mp3']); 
 	}
 	
