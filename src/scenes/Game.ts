@@ -233,6 +233,13 @@ export class Game extends Phaser.Scene {
 			});
 		}
 
+		// destroys any physics bodies with setCollideWorldBounds(true) AND onWorldBounds = true
+		this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body) => {
+			const sprite = body.gameObject as  Phaser.GameObjects.Sprite;
+			console.log('Destroying sprite', sprite);
+			sprite.destroy();
+		});
+
 	}
 
 	onBulletFluffOverlap(...args: unknown[]) {
