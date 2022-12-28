@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { Tile } from '../tiles.js';
 import { Game } from '../scenes/Game.js';
-import { Point } from '../util/geometry.js';
 import { Node } from '../grid.js';
 import { RotatingTileMixin } from './RotatingTileMixin.js';
+import { Point } from '../util/point.js';
 
 const TWO_PI = Math.PI * 2;
 

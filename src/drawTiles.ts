@@ -3,8 +3,9 @@ import Phaser from 'phaser';
 import { TESSELATIONS, TesselationType } from './tesselate.js';
 import { transform, translate, scale, applyToPoints, rotate, applyToPoint } from 'transformation-matrix';
 import { SCALE } from './constants.js';
-import { centerOfMass, Point } from './util/geometry.js';
+import { centerOfMass } from './util/geometry.js';
 import { Tile, TILES } from './tiles.js';
+import { Point } from './util/point.js';
 
 export function drawTiles(scene: Phaser.Scene) {
 	for (const tesselation of Object.values(TESSELATIONS)) {

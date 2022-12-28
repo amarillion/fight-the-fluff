@@ -1,6 +1,7 @@
 import { Node } from '../grid.js';
+import { Point } from '../util/point.js';
 import { Game } from '../scenes/Game.js';
-import { toRadians } from '../util/geometry.js';
+import { IsoSprite } from './IsoPhysics.js';
 
 export class IntervalTimer {
 	
@@ -23,8 +24,8 @@ export class IntervalTimer {
 	}
 }
 
-const PROJECTILE_INTERVAL_MSEC = 1000; ///TODO: level-dependent.
-const BULLET_SPEED = 200.0;
+const PROJECTILE_INTERVAL_MSEC = 900; ///TODO: level-dependent.
+const BULLET_SPEED = 50.0;
 
 export class Tower extends Phaser.GameObjects.Sprite {
 
@@ -43,19 +44,17 @@ export class Tower extends Phaser.GameObjects.Sprite {
 
 	doProjectile() {
 		for (const angle of [180, 270]) {
-			// const sprite = new Projectile(this.game, { x: this.x, y: this.y }, toRadians(angle), BULLET_SPEED);
-
-			const sprite = this.game.physics.add.sprite(this.x, this.y, 'projectile');
-			const radAngle = toRadians(angle);
-			sprite.setVelocity(Math.sin(radAngle) * BULLET_SPEED, Math.cos(radAngle) * BULLET_SPEED);
-			
-			// You need to enable these BOTH to generate 'worldbounds' event.
-			// The first enables the collision detection with the world, the second enables generation of events.
-			sprite.setCollideWorldBounds(true);
-			sprite.body.onWorldBounds = true;
-
+			let start = { x: this.x, y: this.y };
+			start = Point.add(start, Point.radial(20, angle));
+			const sprite = new IsoSprite(this.game, start.x, start.y, 'projectile');
+			sprite.velocity = Point.radial(BULLET_SPEED, angle);
 			this.game.bullets.add(sprite);
-			this.game.spriteLayer.add(sprite); // needed?
+			this.game.spriteLayer.add(sprite);
 		}
+	}
+
+	destroy() {
+		super.destroy();
+		console.log('Tower destroy was called');
 	}
 }

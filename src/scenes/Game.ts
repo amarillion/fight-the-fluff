@@ -15,9 +15,10 @@ import { ProgressBar } from '../sprites/progress-bar.js';
 import DraggableTile, { Draggable } from '../sprites/DraggableTile.js';
 import { openDialog } from '../components/Dialog.js';
 import { LEVELDATA, LevelDataType } from '../levels.js';
-import { Point } from '../util/geometry.js';
 import { Tower } from '../sprites/Tower.js';
 import { StartGate } from '../sprites/StartGate.js';
+import { Point } from '../util/point.js';
+import { IsoPhysics } from '../sprites/IsoPhysics.js';
 
 const CONTROL_SIZE = 120;
 const BAR_W = 100;
@@ -138,6 +139,14 @@ export class Game extends Phaser.Scene {
 		this.spriteLayer.add(c2);
 	}
 
+	update(time: number, delta: number) {
+		super.update(time, delta);
+		IsoPhysics.overlap(this.bananas, this.bullets, 
+			//TODO: explosion... 
+			(a, b) => { a.destroy(); b.destroy(); }
+		);
+	}
+
 	onRotateLeft() {
 		if (this.uiBlocked) { return; }
 		if (this.draggableTile) this.draggableTile.rotateLeft();
@@ -191,8 +200,11 @@ export class Game extends Phaser.Scene {
 	}
 
 	initLevel() {
-		this.children.removeAll(); // was: this.add.displayList.removeAll
-		
+		// TODO: cleaner solution to make each level its own Scene, and destroy that.
+		// no risk of lingering references...
+		this.children.each(c => c.destroy());
+		this.children.removeAll();
+
 		this.bgLayer = this.add.layer();
 		this.bgLayer.setDepth(0);
 		this.tileLayer = this.add.layer();
@@ -206,7 +218,6 @@ export class Game extends Phaser.Scene {
 		this.bananas = this.add.group();
 		this.bullets = this.add.group();
 
-		this.physics.overlap(this.fluffs, this.bullets, this.onBulletFluffOverlap, null, this);
 		this.score = 0;
 		const levelData = LEVELDATA[this.level % LEVELDATA.length];
 		this.tesselation = TESSELATIONS[levelData.tesselation];
@@ -239,11 +250,18 @@ export class Game extends Phaser.Scene {
 			console.log('Destroying sprite', sprite);
 			sprite.destroy();
 		});
-
 	}
 
-	onBulletFluffOverlap(...args: unknown[]) {
-		console.log('OVERLAP!', args);
+	advanceToNextLevel() {
+		const text = new Phaser.GameObjects.Text(this, 
+			SCREENW / 2, SCREENH / 2, 'LEVEL COMPLETE', { color: 'black', align: 'center' }
+		);
+		this.uiLayer.add(text);
+		setTimeout(() => {
+			this.level++;
+			this.initLevel();
+			text.destroy();
+		}, 3000);
 	}
 
 	endReached() {
@@ -251,15 +269,7 @@ export class Game extends Phaser.Scene {
 		this.progressbar.refresh(this.score, MAX_SCORE);
 
 		if (this.score === MAX_SCORE) {
-			const text = new Phaser.GameObjects.Text(this, 
-				SCREENW / 2, SCREENH / 2, 'LEVEL COMPLETE', { color: 'black', align: 'center' }
-			);
-			this.uiLayer.add(text);
-			setTimeout(() => {
-				this.level++;
-				this.initLevel();
-				text.destroy();
-			}, 3000);
+			this.advanceToNextLevel();
 		}
 	}
 
@@ -372,10 +382,6 @@ export class Game extends Phaser.Scene {
 		if (this.solution) {
 			console.log(this.solution);
 		}
-	}
-
-	preUpdate() {
-		
 	}
 
 	updateNextTile() {

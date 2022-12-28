@@ -1,7 +1,4 @@
-export type Point = {
-	x: number;
-	y: number;
-};
+import { Point } from './point.js';
 
 export function centerOfMass(points : Point[]) : Point {
 	return {
@@ -11,7 +8,6 @@ export function centerOfMass(points : Point[]) : Point {
 }
 
 export const TWO_PI = Math.PI * 2;
-
 
 export const toDegrees = (n: number) => Math.round(n * 180 / Math.PI);
 export const toRadians = (n: number) => n * Math.PI / 180;
@@ -49,16 +45,4 @@ export function phaserWrapRotation(value: number) {
 	const max = Math.PI;
 	const range = max - min;
 	return (min + ((((value - min) % range) + range) % range));
-}
-
-export function length(point : Point) {
-	return Math.sqrt(point.x * point.x * point.y * point.y);
-}
-
-export function minus(a : Point, b : Point) {
-	return { x : a.x - b.x, y : a.y - b.y };
-}
-
-export function plus(a : Point, b : Point) {
-	return { x : a.x + b.x, y : a.y + b.y };
 }

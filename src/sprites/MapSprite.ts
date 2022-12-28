@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import { Node } from '../grid.js';
 import { Stream } from '@amarillion/helixgraph/lib/iterableUtils.js';
 import { Game } from '../scenes/Game.js';
-import { Point } from '../util/geometry.js';
+import { Point } from '../util/point.js';
+import { IsometricMixin, IsoSprite } from './IsoPhysics.js';
 
 const STEPS = 40;
 
@@ -49,7 +50,7 @@ class Path {
 	}
 }
 
-export class MapSprite extends Phaser.GameObjects.Sprite {
+export class MapSprite extends IsoSprite {
 	
 	node: Node;
 	stepsRemain: number;
@@ -63,7 +64,6 @@ export class MapSprite extends Phaser.GameObjects.Sprite {
 
 	constructor ({ scene, node, asset }: { scene: Phaser.Scene, node: Node, asset: string }) {
 		super(scene, node.cx, node.cy, asset);
-		
 		this.node = node;
 		this.stepsRemain = 0;
 		this.path = null;

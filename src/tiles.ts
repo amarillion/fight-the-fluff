@@ -1,5 +1,5 @@
 import { TESSELATIONS } from './tesselate.js';
-import { Point } from './util/geometry.js';
+import { Point } from './util/point.js';
 
 export class Tile {
 	resKey: string;

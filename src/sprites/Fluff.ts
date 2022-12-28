@@ -2,13 +2,12 @@ import { Stream } from '@amarillion/helixgraph/lib/iterableUtils.js';
 import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { ActionType, MapSprite } from './MapSprite.js';
 import { Node } from '../grid.js';
-import { Point } from '../util/geometry.js';
+import { Point } from '../util/point.js';
 
 const STEPS = 40;
 
 export class Fluff extends MapSprite {
 	
-
 	constructor ({ scene, node } : { scene: Phaser.Scene, node: Node }) {
 		super({ scene, node, asset: 'fluff-spritesheet' });
 		this.play('fluff');
