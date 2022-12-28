@@ -4,7 +4,7 @@ import { Point } from '../util/point.js';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T = Record<string, unknown>> = new (...args: any[]) => T;
 
-const GRAVITY = 200.0;
+const GRAVITY = 50.0;
 
 export function IsometricMixin<TBase extends Constructor<Phaser.GameObjects.Sprite>>(Base: TBase) {
 	return class IsometricSprite extends Base {
@@ -36,7 +36,7 @@ export function IsometricMixin<TBase extends Constructor<Phaser.GameObjects.Spri
 			this.zz += this.velocityZ / delta;
 			
 			if (this.gravity) {
-				this.velocityZ += (GRAVITY / delta);
+				this.velocityZ -= (GRAVITY / delta);
 			}
 
 			// copy coordinates to sprite.
@@ -64,7 +64,7 @@ export class IsoPhysics {
 	) {
 		for (const aa of a.getChildren() as Phaser.GameObjects.Sprite[]) {
 			for (const bb of b.getChildren() as Phaser.GameObjects.Sprite[]) {
-				if (!(aa.x > bb.x + bb.width ||
+				if (aa.z === bb.z && !(aa.x > bb.x + bb.width ||
 					aa.y > bb.y + bb.height ||
 					bb.x > aa.x + aa.width ||
 					bb.y > aa.y + aa.height)

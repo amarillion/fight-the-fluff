@@ -78,6 +78,12 @@ export class MapSprite extends IsoSprite {
 
 	onHalfWay() {
 		if (!this.path.hasDestTile()) {
+			/*this.gravity = true;
+			this.action = {
+				type: 'SIT',
+				time: 10000 // TODO: infinite
+			};
+			return;*/
 			this.destroy();
 		}
 
