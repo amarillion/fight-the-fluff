@@ -19,6 +19,7 @@ import { Tower } from '../sprites/Tower.js';
 import { StartGate } from '../sprites/StartGate.js';
 import { Point } from '../util/point.js';
 import { IsoPhysics } from '../sprites/IsoPhysics.js';
+import { KeyCombo } from '../util/keycombo.js';
 
 const CONTROL_SIZE = 120;
 const BAR_W = 100;
@@ -53,6 +54,33 @@ function initGrid(tesselation: TesselationType) {
 }
 
 export class Game extends Phaser.Scene {
+
+	spriteLayer : Phaser.GameObjects.Layer;
+	bgLayer: Phaser.GameObjects.Layer;
+	tileLayer: Phaser.GameObjects.Layer;
+	uiLayer: Phaser.GameObjects.Layer;
+	fluffs: Phaser.GameObjects.Group;
+	bananas: Phaser.GameObjects.Group;
+	bullets: Phaser.GameObjects.Group;
+
+	score: number;
+	level: number;
+
+	grid: Grid;
+	tileSet: Tile[];
+	noDeadEnds: Tile[];
+	startNode: Node;
+	endNode: Node;
+	solution: Node[];
+	progressbar: ProgressBar;
+	control: Phaser.GameObjects.Ellipse;
+	draggableTile: DraggableTile;
+	uiBlocked: boolean;
+	tesselation: TesselationType;
+
+	private readonly keyCombo = new KeyCombo({ code: /iddqd/, action: () => {
+		this.advanceToNextLevel();
+	}});
 
 	constructor () {
 		super({ key: 'GameScene' });
@@ -104,39 +132,18 @@ export class Game extends Phaser.Scene {
 	
 	}
 
-	spriteLayer : Phaser.GameObjects.Layer;
-	bgLayer: Phaser.GameObjects.Layer;
-	tileLayer: Phaser.GameObjects.Layer;
-	uiLayer: Phaser.GameObjects.Layer;
-	fluffs: Phaser.GameObjects.Group;
-	bananas: Phaser.GameObjects.Group;
-	bullets: Phaser.GameObjects.Group;
-
-	score: number;
-	level: number;
-
-	grid: Grid;
-	tileSet: Tile[];
-	noDeadEnds: Tile[];
-	startNode: Node;
-	endNode: Node;
-	solution: Node[];
-	progressbar: ProgressBar;
-	control: Phaser.GameObjects.Ellipse;
-	draggableTile: DraggableTile;
-	uiBlocked: boolean;
-	tesselation: TesselationType;
-
 	initGates(levelData: LevelDataType) {
 		this.startNode = this.findNodeAt(150, 150);
 		this.setTile(this.startNode, this.tileSet[this.tileSet.length - 1]);
 		const c1 = new StartGate(this, this.startNode);
 		this.spriteLayer.add(c1);
 
-		this.endNode = this.findNodeAt(SCREENW - 150, SCREENH - 150);
-		this.setTile(this.endNode, this.tileSet[this.tileSet.length - 1]);
-		const c2 = new Tower(this, this.endNode);
-		this.spriteLayer.add(c2);
+		for (const tower of levelData.towers) {
+			this.endNode = this.findNodeAt(tower.pos.x, tower.pos.y);
+			this.setTile(this.endNode, this.tileSet[this.tileSet.length - 1]);
+			const c2 = new Tower(this, this.endNode, tower);
+			this.spriteLayer.add(c2);
+		}
 	}
 
 	update(time: number, delta: number) {
@@ -395,8 +402,11 @@ export class Game extends Phaser.Scene {
 		this.uiLayer.add(this.draggableTile);
 	}
 
-
-	create () {
+	create() {
+		this.input.keyboard.on('keydown', (evt: { key: string }) => {
+			this.keyCombo.onKeyPress(evt.key);
+		});
+		
 		this.addReusableAnimations();
 		
 		// make tile variants
