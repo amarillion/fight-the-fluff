@@ -2,7 +2,7 @@ import { TESSELATIONS } from './tesselate.js';
 import { Point } from './util/point.js';
 import { SCREENW, SCREENH } from './constants.js';
 
-export type TowerConfigType = { pos: Point, bullets: { type: 'fixed'|'aim', dir?: number }[] };
+export type TowerConfigType = { pos: Point, bullets: ({ type: 'aim' }| { type: 'fixed', dir: number })[] };
 export type LevelDataType = {
 	dialog: string;
 	tesselation: string;
@@ -45,7 +45,7 @@ If the fluffs get too annoying, DRAG them away.
 		tesselation: TESSELATIONS.SQUARE.name,
 		towers: [{ 
 			pos: { x: SCREENW - 150, y: SCREENH - 150 },
-			bullets: [{ type: 'fixed', dir: 270 }, { type: 'fixed', dir: 180 }],
+			bullets: [ { type: 'fixed', dir: 270 }, { type: 'fixed', dir: 180 }, { type: 'aim' } ],
 		}]
 	}, { // 1
 		dialog: `

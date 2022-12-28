@@ -199,6 +199,12 @@ export class Game extends Phaser.Scene {
 			repeat: -1
 		});
 		this.anims.create({
+			key: 'crosshair',
+			frames: this.anims.generateFrameNumbers('crosshair-spritesheet', { frames: [ 0, 1 ] }),
+			frameRate: 20,
+			repeat: -1
+		});
+		this.anims.create({
 			key: 'banana',
 			frames: this.anims.generateFrameNumbers('banana-spritesheet', { frames: [0, 1] }),
 			frameRate: 5,
