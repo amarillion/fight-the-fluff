@@ -346,8 +346,10 @@ export class Game extends Phaser.Scene {
 			sprite.setOrigin(0.5, 0.97);
 			sprite.play('laser');
 			this.tileLayer.add(sprite);
+			
+			node.scorchMark = sprite; // already mark node so it can't be picked up.
 			setTimeout(() => { 
-				node.scorch(sprite); 
+				node.scorch(); 
 				this.checkPath(); 
 			}, LASER_WARMUP);
 		}
@@ -512,7 +514,7 @@ export class Game extends Phaser.Scene {
 			return;
 		}
 
-		// else check for fluffs to drag...
+		// check for fluffs to drag...
 		// Phaser annoyance: children is Phasers own Set type that can not be iterated...
 		for (const f of this.fluffs.children.getArray()) {
 			const fluff = f as Fluff;
@@ -524,7 +526,33 @@ export class Game extends Phaser.Scene {
 				this.dragTarget.dragStart(pointer);
 				return;
 			}
+		}
 
+		// otherwise, check for tiles...
+		const node = this.findNodeAt(pointer.x, pointer.y);
+		// TODO check if press is maintained at least 100 msec...
+		if (node) {
+			// TODO: remove any pre-existing draggable tiles...
+			if (node !== this.startNode &&
+				node !== this.endNode &&
+				!node.scorchMark
+			) {
+				this.draggableTile = new DraggableTile({
+					scene: this, 
+					x: pointer.x,
+					y: pointer.y,
+					tile: node.tile
+				});
+				this.dragTarget = this.draggableTile;
+				this.dragTarget.dragStart(pointer);
+				this.uiLayer.add(this.draggableTile);
+				
+				node.tile = null;
+				node.tileImg.destroy();
+				node.tileImg = null;
+				node.links = [];
+				this.checkPath();
+			}
 		}
 	}
 

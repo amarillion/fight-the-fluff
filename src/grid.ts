@@ -48,13 +48,12 @@ export class Node {
 		this.links = [];
 	}
 
-	scorch(sprite: Phaser.GameObjects.Sprite) {
+	scorch() {
 		// if tile was deleted in between, don't save scorchmark
-		if(this.destroyed) { sprite.destroy(); }
+		if(this.destroyed) { this.scorchMark.destroy(); }
 		
 		// transfer scorchMark to node
-		this.links = [], 
-		this.scorchMark = sprite;
+		this.links = [];
 	}
 
 	toString() {
