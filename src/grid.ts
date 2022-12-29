@@ -19,7 +19,9 @@ export class Node {
 	links: Node[];
 	delegate: { isFilled: boolean };
 	tile: Tile;
-	tileImg: unknown;
+	tileImg: Phaser.GameObjects.Image;
+	destroyed = false;
+	scorchMark: Phaser.GameObjects.Sprite;
 
 	constructor(
 		mx: number, my: number, idx: number, 
@@ -44,6 +46,15 @@ export class Node {
 		this.cy = this.points.reduce((prev, cur) => prev + cur.y, 0) / this.points.length;
 		this.element = element;
 		this.links = [];
+	}
+
+	scorch(sprite: Phaser.GameObjects.Sprite) {
+		// if tile was deleted in between, don't save scorchmark
+		if(this.destroyed) { sprite.destroy(); }
+		
+		// transfer scorchMark to node
+		this.links = [], 
+		this.scorchMark = sprite;
 	}
 
 	toString() {

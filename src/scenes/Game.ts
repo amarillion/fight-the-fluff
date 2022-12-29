@@ -337,15 +337,19 @@ export class Game extends Phaser.Scene {
 	doLaser() {
 		// pick a tile at random
 		const cell = this.grid.randomCell();
-		const node = pickOne(cell.nodes);
+		const node = pickOne(cell.nodes.filter(n => !n.scorchMark));
+		if (!node) return;
 		if (node === this.startNode) return;
 		if (node === this.endNode) return;
 		if (node.tile) {
 			const sprite = new Phaser.GameObjects.Sprite(this, node.cx, node.cy, 'laser-spritesheet');
 			sprite.setOrigin(0.5, 0.97);
 			sprite.play('laser');
-			this.spriteLayer.add(sprite);
-			setTimeout(() => { node.links = [], this.checkPath(); }, LASER_WARMUP);
+			this.tileLayer.add(sprite);
+			setTimeout(() => { 
+				node.scorch(sprite); 
+				this.checkPath(); 
+			}, LASER_WARMUP);
 		}
 	}
 
@@ -399,7 +403,8 @@ export class Game extends Phaser.Scene {
 		// can't destroy start or end!
 		if (node === this.startNode || node === this.endNode) return;
 
-		const img = node.tileImg as Phaser.GameObjects.Image;
+		const img = node.tileImg;
+		const scorchMark = node.scorchMark;
 		const tile = node.tile;
 		
 		if (!tile || !img) return; // already destroyed by something else....
@@ -410,18 +415,18 @@ export class Game extends Phaser.Scene {
 			node.yco - tile.origin.y + tile.center.y
 		);
 		img.setDisplayOrigin(tile.center.x, tile.center.y);
-
 		
 		this.tweens.add({
-			targets: [ img ],
+			targets: [ img, scorchMark ],
 			duration: 1000,
 			rotation: Math.PI,
 			scale: 0,
-			onComplete: () => img.destroy()
+			onComplete: () => { img.destroy(); scorchMark?.destroy(); }
 		});
 
 		node.tile = null;
 		node.tileImg = null;
+		node.destroyed = true;
 	}
 
 	checkPath() {
