@@ -8,10 +8,10 @@ export class IntervalTimer {
 	private readonly action: () => void;
 	private remain: number;
 
-	constructor(startTime: number, onIntervalComplete: () => void) {
+	constructor(startTime: number, onIntervalComplete: () => void, phase?: number) {
 		this.startTime = startTime;
 		this.action = onIntervalComplete;
-		this.remain = startTime;
+		this.remain = startTime + (phase || 0);
 	}
 
 	preUpdate(timer: number, delta: number) {

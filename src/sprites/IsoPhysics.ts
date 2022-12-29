@@ -18,6 +18,8 @@ export function IsometricMixin<TBase extends Constructor<Phaser.GameObjects.Spri
 		private velocityY = 0;
 		private velocityZ = 0;
 	
+		lifeRemain = -1;
+
 		set velocity(p: Point) {
 			this.velocityX = p.x;
 			this.velocityY = p.y;
@@ -50,6 +52,13 @@ export function IsometricMixin<TBase extends Constructor<Phaser.GameObjects.Spri
 			}
 			this.prevX = this.x;
 			this.prevY = this.y;
+
+			if (this.lifeRemain > 0) {
+				this.lifeRemain -= delta;
+				if (this.lifeRemain < 0) {
+					this.destroy();
+				}
+			}
 		}
 	};
 }

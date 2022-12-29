@@ -2,17 +2,16 @@ import { Node } from '../grid.js';
 import { Point } from '../util/point.js';
 import { Game } from '../scenes/Game.js';
 import { IsoSprite } from './IsoPhysics.js';
-import { TowerConfigType } from '../levels.js';
+import { BulletType, TowerConfigType } from '../levels.js';
 import { IntervalTimer } from '../util/IntervalTimer.js';
 import { pickRandom } from '../util/random.js';
 import { Banana } from './Banana.js';
 import { toDegrees } from '../util/geometry.js';
 
-const PROJECTILE_INTERVAL_MSEC = 900; ///TODO: level-dependent / tower dependent.
 const BULLET_SPEED = 50.0; // TODO: bullet-dependent
 
-const CROSSHAIR_LEAD_PERIOD = 1000;
-const CROSSHAIR_SHOOT_PERIOD = 1000;
+const CROSSHAIR_LEAD_PERIOD = 500;
+const CROSSHAIR_SHOOT_PERIOD = 500;
 
 export class CrossHair extends Phaser.GameObjects.Sprite {
 
@@ -52,7 +51,7 @@ export class CrossHair extends Phaser.GameObjects.Sprite {
 export class Tower extends Phaser.GameObjects.Sprite {
 
 	private readonly game: Game;
-	private projectileInterval: IntervalTimer;
+	private intervals: IntervalTimer[] = [];
 	private config: TowerConfigType;
 	private crosshair: Phaser.GameObjects.Sprite;
 
@@ -60,36 +59,37 @@ export class Tower extends Phaser.GameObjects.Sprite {
 		super(game, node.cx, node.cy, 'endgate');
 		this.game = game;
 		this.config = config;
-		this.projectileInterval = new IntervalTimer(PROJECTILE_INTERVAL_MSEC, () => this.doProjectile());
+		for (const bullet of this.config.bullets) {
+			const interval = new IntervalTimer(this.config.period, () => this.doProjectile(bullet), bullet.phase);
+			this.intervals.push(interval);
+		}
 	}
 
 	shoot(angleDegrees: number) {
 		let start = { x: this.x, y: this.y };
 		start = Point.add(start, Point.radial(20, angleDegrees));
 		const sprite = new IsoSprite(this.game, start.x, start.y, 'projectile');
+		sprite.lifeRemain = this.config.range;
 		sprite.velocity = Point.radial(BULLET_SPEED, angleDegrees);
 		this.game.bullets.add(sprite);
 		this.game.spriteLayer.add(sprite);
 	}
 
 	preUpdate(time: number, delta: number) {
-		this.projectileInterval.preUpdate(time, delta);
+		this.intervals.forEach(i => i.preUpdate(time, delta));
 	}
 
-	doProjectile() {
-		for (const bullet of this.config.bullets) {
-			
-			if (bullet.type === 'fixed') {
-				const angleDegrees = bullet.dir;
-				this.shoot(angleDegrees);
-			}
-			else {
-				// pick a random banana
-				const banana = pickRandom(this.game.bananas.getChildren()) as Banana;
-				if (!banana) return;
-				this.crosshair = new CrossHair(this.game, banana.x, banana.y, banana, this);
-				this.game.uiLayer.add(this.crosshair);
-			}
+	doProjectile(bullet: BulletType) {
+		if (bullet.type === 'fixed') {
+			const angleDegrees = bullet.dir;
+			this.shoot(angleDegrees);
+		}
+		else {
+			// pick a random banana
+			const banana = pickRandom(this.game.bananas.getChildren()) as Banana;
+			if (!banana) return;
+			this.crosshair = new CrossHair(this.game, banana.x, banana.y, banana, this);
+			this.game.uiLayer.add(this.crosshair);
 		}
 	}
 }

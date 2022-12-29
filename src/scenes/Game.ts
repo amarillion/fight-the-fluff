@@ -420,7 +420,7 @@ export class Game extends Phaser.Scene {
 		this.uiBlocked = false;
 		drawTiles(this);
 
-		this.time.addEvent({ delay: 1000, callback: () => this.addMob(), loop: true });
+		this.time.addEvent({ delay: 1600, callback: () => this.addMob(), loop: true });
 	
 		this.initLevel();
 		

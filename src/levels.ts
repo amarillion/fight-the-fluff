@@ -2,16 +2,19 @@ import { TESSELATIONS } from './tesselate.js';
 import { Point } from './util/point.js';
 import { SCREENW, SCREENH } from './constants.js';
 
-export type TowerConfigType = { pos: Point, bullets: ({ type: 'aim' }| { type: 'fixed', dir: number })[] };
+export type BulletType = ({ type: 'aim' } | { type: 'fixed', dir: number }) & { phase?: number }
+export type TowerConfigType = { pos: Point, period: number, range: number, bullets: BulletType[] };
 export type LevelDataType = {
 	dialog: string;
 	tesselation: string;
 	towers: TowerConfigType[]
 }
 
-const DEFAULT_TOWER_CONFIG = { towers: [{ 
+const DEFAULT_TOWER_CONFIG = { towers: [{
+	period: 900,
+	range: 1000,
 	pos: { x: SCREENW - 150, y: SCREENH - 150 },
-	bullets: [{ type: 'fixed', dir: 270 }, { type: 'fixed', dir: 180 }],
+	bullets: [{ type: 'aim' }],
 } as TowerConfigType ] };
 
 export const LEVELDATA: LevelDataType[] = [
@@ -45,7 +48,9 @@ If the fluffs get too annoying, DRAG them away.
 		tesselation: TESSELATIONS.SQUARE.name,
 		towers: [{ 
 			pos: { x: SCREENW - 150, y: SCREENH - 150 },
-			bullets: [ { type: 'fixed', dir: 270 }, { type: 'fixed', dir: 180 }, { type: 'aim' } ],
+			period: 1100,
+			range: 1200,
+			bullets: [ { type: 'aim' } ],
 		}]
 	}, { // 1
 		dialog: `
@@ -57,7 +62,13 @@ It reminds me of someone...
 		tesselation: TESSELATIONS.HEXAGONAL.name,
 		towers: [{ 
 			pos: { x: SCREENW - 150, y: SCREENH - 150 },
-			bullets: [{ type: 'fixed', dir: 240 }, { type: 'fixed', dir: 180 }, { type: 'fixed', dir: 300 }],
+			period: 1100,
+			range: 1000,
+			bullets: [
+				{ type: 'fixed', dir: 180, phase: 0 }, 
+				{ type: 'fixed', dir: 240, phase: 150 }, 
+				{ type: 'fixed', dir: 300, phase: 300 }
+			],
 		}]
 	}, { // 2
 		dialog: `<h2>SHAMELESS PLUG</h2>
