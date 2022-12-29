@@ -7,15 +7,17 @@ export type TowerConfigType = { pos: Point, period: number, range: number, bulle
 export type LevelDataType = {
 	dialog: string;
 	tesselation: string;
+	laserPeriod: number;
+	fluffPeriod: number;
 	towers: TowerConfigType[]
 }
 
-const DEFAULT_TOWER_CONFIG = { towers: [{
+const DEFAULT_LEVEL_CONFIG = { towers: [{
 	period: 900,
 	range: 1000,
 	pos: { x: SCREENW - 150, y: SCREENH - 150 },
 	bullets: [{ type: 'aim' }],
-} as TowerConfigType ] };
+} as TowerConfigType ], laserPeriod: 8000, fluffPeriod: 2000 };
 
 export const LEVELDATA: LevelDataType[] = [
 
@@ -51,7 +53,9 @@ If the fluffs get too annoying, DRAG them away.
 			period: 1100,
 			range: 1200,
 			bullets: [ { type: 'aim' } ],
-		}]
+		}],
+		laserPeriod: 12000,
+		fluffPeriod: 4000,
 	}, { // 1
 		dialog: `
 <h2>Intermission</h2>
@@ -69,7 +73,9 @@ It reminds me of someone...
 				{ type: 'fixed', dir: 240, phase: 150 }, 
 				{ type: 'fixed', dir: 300, phase: 300 }
 			],
-		}]
+		}],
+		laserPeriod: 10000,
+		fluffPeriod: 3000,
 	}, { // 2
 		dialog: `<h2>SHAMELESS PLUG</h2>
 		<p>Do you like the hexagonal music?
@@ -77,7 +83,7 @@ It reminds me of someone...
 		Follow <a href="https://twitter.com/donall">@Donall</a> on twitter!
 		</p>`,
 		tesselation: TESSELATIONS.TRIANGULAR.name,
-		...DEFAULT_TOWER_CONFIG
+		...DEFAULT_LEVEL_CONFIG
 	}, { // 3
 		dialog: `<h2>SHAMELESS PLUG</h2>
 		<p>
@@ -86,7 +92,7 @@ It reminds me of someone...
 		How did our two heroes got into this mess?
 		Play <a href="https://tins.amarillion.org/entry/205/">Fole and Raul go Flower Power</a>, and find out!</p>`,
 		tesselation: TESSELATIONS.CAIRO.name,
-		...DEFAULT_TOWER_CONFIG
+		...DEFAULT_LEVEL_CONFIG
 	}, { // 4
 		tesselation: TESSELATIONS.DIAMOND.name,
 		dialog: `<h2>SHAMELESS PLUG</h2>
@@ -97,6 +103,6 @@ It reminds me of someone...
 		where you make a game as a gift for somebody else.
 		</p>
 		`,
-		...DEFAULT_TOWER_CONFIG
+		...DEFAULT_LEVEL_CONFIG
 	}
 ];

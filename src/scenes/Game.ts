@@ -20,11 +20,14 @@ import { StartGate } from '../sprites/StartGate.js';
 import { Point } from '../util/point.js';
 import { IsoPhysics } from '../sprites/IsoPhysics.js';
 import { KeyCombo } from '../util/keycombo.js';
+import { IntervalTimer } from '../util/IntervalTimer.js';
 
 const CONTROL_SIZE = 120;
 const BAR_W = 100;
 const BAR_H = 50;
 const MARGIN = 5;
+
+const LASER_WARMUP = 2000;
 
 function initGrid(tesselation: TesselationType) {
 	const { unitSize, links } = tesselation;
@@ -144,10 +147,23 @@ export class Game extends Phaser.Scene {
 			const c2 = new Tower(this, this.endNode, tower);
 			this.spriteLayer.add(c2);
 		}
+
+		const laserInterval = new IntervalTimer(levelData.laserPeriod, () => this.doLaser());
+		this.intervals.push(laserInterval);
+
+		const fluffInterval = new IntervalTimer(levelData.fluffPeriod, () => this.spawnFluff());
+		this.intervals.push(fluffInterval);
+
+		const bananaInterval = new IntervalTimer(1600, () => this.addMob());
+		this.intervals.push(bananaInterval);
 	}
+
+	private intervals: IntervalTimer[] = [];
 
 	update(time: number, delta: number) {
 		super.update(time, delta);
+		this.intervals.forEach(i => i.preUpdate(time, delta));
+
 		IsoPhysics.overlap(this.bananas, this.bullets, 
 			//TODO: explosion... 
 			(a, b) => { a.destroy(); b.destroy(); }
@@ -205,6 +221,12 @@ export class Game extends Phaser.Scene {
 			repeat: -1
 		});
 		this.anims.create({
+			key: 'laser',
+			frames: this.anims.generateFrameNumbers('laser-spritesheet', { frames: [ 0, 1, 2 ] }),
+			frameRate: 1,
+			repeat: 0
+		});
+		this.anims.create({
 			key: 'banana',
 			frames: this.anims.generateFrameNumbers('banana-spritesheet', { frames: [0, 1] }),
 			frameRate: 5,
@@ -217,6 +239,7 @@ export class Game extends Phaser.Scene {
 		// no risk of lingering references...
 		this.children.each(c => c.destroy());
 		this.children.removeAll();
+		this.intervals = [];
 
 		this.bgLayer = this.add.layer();
 		this.bgLayer.setDepth(0);
@@ -309,9 +332,21 @@ export class Game extends Phaser.Scene {
 		const sprite = new Banana(config);
 		this.bananas.add(sprite);
 		this.spriteLayer.add(sprite);
-		this.physics.add.existing(sprite);
+	}
 
-		this.spawnFluff();
+	doLaser() {
+		// pick a tile at random
+		const cell = this.grid.randomCell();
+		const node = pickOne(cell.nodes);
+		if (node === this.startNode) return;
+		if (node === this.endNode) return;
+		if (node.tile) {
+			const sprite = new Phaser.GameObjects.Sprite(this, node.cx, node.cy, 'laser-spritesheet');
+			sprite.setOrigin(0.5, 0.97);
+			sprite.play('laser');
+			this.spriteLayer.add(sprite);
+			setTimeout(() => { node.links = [], this.checkPath(); }, LASER_WARMUP);
+		}
 	}
 
 	spawnFluff() {
@@ -420,8 +455,6 @@ export class Game extends Phaser.Scene {
 		this.uiBlocked = false;
 		drawTiles(this);
 
-		this.time.addEvent({ delay: 1600, callback: () => this.addMob(), loop: true });
-	
 		this.initLevel();
 		
 		this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
