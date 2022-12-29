@@ -14,6 +14,7 @@ export default class extends Phaser.Scene {
 		this.load.spritesheet('crosshair-spritesheet', './assets/images/crosshair.png', { frameWidth: 12 });
 		this.load.spritesheet('laser-spritesheet', './assets/images/laser.png', { frameWidth: 64, frameHeight: 450 });
 		this.load.image('startgate', './assets/images/BananaBox.png');
+		this.load.image('cloud', './assets/images/cloud.png');
 		this.load.image('endgate', './assets/images/Ship.png');
 		this.load.image('projectile', './assets/images/projectile.png');
 		this.load.audio('music', ['./assets/music/march_of_the_fluff.mp3']); 

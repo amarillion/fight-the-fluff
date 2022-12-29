@@ -12,7 +12,7 @@ const config = {
 	type: Phaser.AUTO,
 	parent: 'content',
 	disableContextMenu: true,
-	backgroundColor: '#dddddd',
+	backgroundColor: '#bbbbff',
 	width: SCREENW,
 	height: SCREENH,
 	localStorageName: 'tins21-amarillion',
