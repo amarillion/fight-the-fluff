@@ -8,7 +8,7 @@ const STEPS = 40;
 
 export class Banana extends MapSprite {
 	
-	nextNode: Node = null;
+	prevPickedNodes = new Set<Node>(); 
 
 	constructor ({ scene, node } : { scene: Game, node: Node }) {
 		super({ scene, node, asset: 'banana-spritesheet' });
@@ -17,6 +17,7 @@ export class Banana extends MapSprite {
 	}
 
 	onNodeReached() {
+		this.prevPickedNodes.add(this.node);
 		if (this.node === this.scene.endNode) {
 			this.scene.endReached();
 			this.destroy();
@@ -24,11 +25,16 @@ export class Banana extends MapSprite {
 	}
 
 	determineNextNode() {
+		const result = this.determineNextNodeHelper();
+		if (result) this.prevPickedNodes.add(result);
+		return result;
+	}
+
+	determineNextNodeHelper() {
 		const exits = Stream.of(
 			Node.getExits(this.node)).map(v => v[1])
 			// don't go back.
-			// don't pick the same nextNode twice in a row.
-			.filter(n => n !== this.prevNode && n !== this.nextNode)
+			.filter(n => n !== this.prevNode)
 			.collect();
 		
 		if(exits.length === 0) {
@@ -40,13 +46,18 @@ export class Banana extends MapSprite {
 		// filter for paths that do not fall off a cliff
 		const exitsToTile = exits.filter(n => n.tile && !n.destroyed);
 		if (exitsToTile.length > 0) {
-			this.nextNode = pickOne(exitsToTile);
-			return this.nextNode;
+
+			// filter for paths that do not revisit old nodes
+			const newTiles = exitsToTile.filter(n => !this.prevPickedNodes.has(n));
+			if (newTiles.length > 0) {
+				return pickOne(newTiles);
+			}
+
+			return pickOne(exitsToTile);
 		}
 
-		// no choice but to fall off a cliff.
-		this.nextNode = pickOne(exits);
-		return this.nextNode;
+		// no choice but to fall off a cliff / revisit previous node.
+		return pickOne(exits);
 	}
 
 	determineNextAction() : ActionType {
