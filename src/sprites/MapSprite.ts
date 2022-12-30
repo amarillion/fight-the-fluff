@@ -56,7 +56,7 @@ export class MapSprite extends IsoSprite {
 	stepsRemain: number;
 	prevNode: Node;
 	halfwayCheckpoint: boolean;
-	solution: Node[];
+	// solution: Node[];
 	action: ActionType;
 	scene: Game;
 	actionCounter: number;

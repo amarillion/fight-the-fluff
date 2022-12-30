@@ -2,9 +2,6 @@ import { Grid, Node, Unit } from '../grid.js';
 import Phaser from 'phaser';
 import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { assert } from '@amarillion/helixgraph/lib/assert.js';
-import { trackbackNodes } from '@amarillion/helixgraph/lib/pathFinding.js';
-import { breadthFirstSearch } from '@amarillion/helixgraph';
-
 import { Fluff } from '../sprites/Fluff.js';
 import { Banana } from '../sprites/Banana.js';
 import { TESSELATIONS, TesselationType } from '../tesselate.js';
@@ -28,6 +25,7 @@ const BAR_H = 50;
 const MARGIN = 5;
 
 const LASER_WARMUP = 2000;
+const MAX_BANANAS = 6; // maximum at the same time on screen
 
 function initGrid(tesselation: TesselationType) {
 	const { unitSize, links } = tesselation;
@@ -309,22 +307,27 @@ export class Game extends Phaser.Scene {
 		}
 	}
 
-	debugAdjacent(node: Node) {
-		node.delegate.isFilled = true;
-		let i = 0;
-		for (const [ , adjacent ] of Node.getAdjacent(node)) {
-			const delegate = adjacent.delegate as Phaser.GameObjects.Polygon;
-			setTimeout(() => delegate.isFilled = true, (i+2) * 200);
-			setTimeout(() => delegate.isFilled = false, (i+3) * 200);
-			i++;
-		}
-		setTimeout(() => node.delegate.isFilled = false, 100);
-		console.log(`{ dx: ${node.mx - 1}, dy: ${node.my - 1}, idx: ${node.idx} },`);
+	debugNode(node: Node) {
+		// LOG DEBUGGING INFO
+		console.log(node);
+		let exitIdx = 0;
+		for (const exit of Node.getExits(node)) {
+			const otherNode = exit[1];
+			let msg = `Exit ${exitIdx} dir: ${exit[0]} node: ${exit[1]} => `;
+			for (const returns of Node.getExits(otherNode)) {
+				if (returns[1] === node) {
+					msg += ` return found`;
+				}
+			}
+			exitIdx++;
+			console.log(msg);
+		}		
 	}
 
 	addMob() {
 		if (this.uiBlocked) { return; }
 
+		if (this.bananas.getLength() > MAX_BANANAS) { return; }
 		const config = {
 			scene: this,
 			node: this.startNode,
@@ -397,6 +400,7 @@ export class Game extends Phaser.Scene {
 		img.setDisplayOrigin(tile.origin.x, tile.origin.y);
 		img.rotation = node.element.rotation;
 		node.tileImg = img;
+		node.destroyed = false;
 		this.tileLayer.add(img);
 		this.checkPath();
 	}
@@ -432,11 +436,11 @@ export class Game extends Phaser.Scene {
 	}
 
 	checkPath() {
-		const prev = breadthFirstSearch(this.startNode, this.endNode, Node.getAdjacent);
-		this.solution = trackbackNodes(this.startNode, this.endNode, prev);
-		if (this.solution) {
-			console.log(this.solution);
-		}
+		// const prev = breadthFirstSearch(this.startNode, this.endNode, Node.getAdjacent);
+		// this.solution = trackbackNodes(this.startNode, this.endNode, prev);
+		// if (this.solution) {
+		// 	console.log(this.solution);
+		// }
 	}
 
 	updateNextTile() {
@@ -465,15 +469,6 @@ export class Game extends Phaser.Scene {
 		this.initLevel();
 		
 		this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-			/*
-			const node = this.findNodeAt(pointer.x, pointer.y);
-			if (node && !node.tile) {
-				assert(!!this.nextTile);
-				this.setTile(node, this.nextTile);
-				this.updateNextTile();
-				// this.debugAdjacent(node);
-			}
-			*/
 			this.onDown(pointer);
 		});
 		this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => this.onMove(pointer));
@@ -530,8 +525,12 @@ export class Game extends Phaser.Scene {
 
 		// otherwise, check for tiles...
 		const node = this.findNodeAt(pointer.x, pointer.y);
+		// if(node) {
+		// 	this.debugNode(node);
+		// }
+
 		// TODO check if press is maintained at least 100 msec...
-		if (node) {
+		if (node && node.tile) {
 			// TODO: remove any pre-existing draggable tiles...
 			if (node !== this.startNode &&
 				node !== this.endNode &&
@@ -550,7 +549,6 @@ export class Game extends Phaser.Scene {
 				node.tile = null;
 				node.tileImg.destroy();
 				node.tileImg = null;
-				node.links = [];
 				this.checkPath();
 			}
 		}
