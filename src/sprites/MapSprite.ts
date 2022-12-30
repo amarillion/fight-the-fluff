@@ -62,7 +62,7 @@ export class MapSprite extends IsoSprite {
 	actionCounter: number;
 	path: Path;
 
-	constructor ({ scene, node, asset }: { scene: Phaser.Scene, node: Node, asset: string }) {
+	constructor ({ scene, node, asset }: { scene: Game, node: Node, asset: string }) {
 		super(scene, node.cx, node.cy, asset);
 		this.node = node;
 		this.stepsRemain = 0;
@@ -70,6 +70,7 @@ export class MapSprite extends IsoSprite {
 		this.prevNode = null;
 		this.halfwayCheckpoint = false;
 		this.actionCounter = 0;
+		this.scene = scene;
 	}
 
 	determineNextNode() : Node {

@@ -73,6 +73,7 @@ export class Tower extends Phaser.GameObjects.Sprite {
 		sprite.velocity = Point.radial(BULLET_SPEED, angleDegrees);
 		this.game.bullets.add(sprite);
 		this.game.spriteLayer.add(sprite);
+		this.game.playEffect('sfx-cannon-shoot');
 	}
 
 	preUpdate(time: number, delta: number) {
@@ -86,8 +87,16 @@ export class Tower extends Phaser.GameObjects.Sprite {
 		}
 		else {
 			// pick a random banana
-			const banana = pickRandom(this.game.bananas.getChildren()) as Banana;
+			const inRange = this.game.bananas.getChildren().filter(
+				b => {
+					const bb = b as Phaser.GameObjects.Sprite; 
+					const dist = Point.distance({ x: this.x, y: this.y }, { x: bb.x, y: bb.y });
+					return (dist < 300 && dist > 50);
+				}
+			);
+			const banana = pickRandom(inRange) as Banana;
 			if (!banana) return;
+			this.game.playEffect('sfx-cannon-target');
 			this.crosshair = new CrossHair(this.game, banana.x, banana.y, banana, this);
 			this.game.uiLayer.add(this.crosshair);
 		}

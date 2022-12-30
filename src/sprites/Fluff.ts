@@ -3,14 +3,16 @@ import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { ActionType, MapSprite } from './MapSprite.js';
 import { Node } from '../grid.js';
 import { Point } from '../util/point.js';
+import { Game } from '../scenes/Game.js';
 
 const STEPS = 40;
 
 export class Fluff extends MapSprite {
 	
-	constructor ({ scene, node } : { scene: Phaser.Scene, node: Node }) {
+	constructor ({ scene, node } : { scene: Game, node: Node }) {
 		super({ scene, node, asset: 'fluff-spritesheet' });
 		this.play('fluff');
+		this.scene.playEffect('sfx-fluff-appear');
 	}
 
 	determineNextNode() {
@@ -127,6 +129,7 @@ export class Fluff extends MapSprite {
 	}
 
 	dragCancel() {
+		this.scene.playEffect('sfx-fluff-throw');
 		this.destroy();
 	}
 

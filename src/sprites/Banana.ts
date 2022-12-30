@@ -13,6 +13,7 @@ export class Banana extends MapSprite {
 	constructor ({ scene, node } : { scene: Game, node: Node }) {
 		super({ scene, node, asset: 'banana-spritesheet' });
 		this.play('banana');
+		this.scene.playEffect('sfx-banana-spawn');
 		// this.solution = scene.solution && scene.solution.slice(1);
 	}
 
@@ -20,6 +21,7 @@ export class Banana extends MapSprite {
 		this.prevPickedNodes.add(this.node);
 		if (this.node === this.scene.endNode) {
 			this.scene.endReached();
+			this.scene.playEffect('sfx-banana-tower');
 			this.destroy();
 		}
 	}

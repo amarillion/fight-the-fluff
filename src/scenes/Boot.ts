@@ -17,7 +17,20 @@ export default class extends Phaser.Scene {
 		this.load.image('cloud', './assets/images/cloud.png');
 		this.load.image('endgate', './assets/images/Ship.png');
 		this.load.image('projectile', './assets/images/projectile.png');
-		this.load.audio('music', ['./assets/music/march_of_the_fluff.mp3']); 
+		this.load.audio('music', ['./assets/music/march_of_the_fluff.mp3']);
+
+		this.load.audio('sfx-laser',        './assets/sfx/Laser_Cannon-Mike_Koenig-797224747.wav');
+		this.load.audio('sfx-banana-spawn', './assets/sfx/connect.wav');
+		this.load.audio('sfx-banana-tower', './assets/sfx/explode3.wav');
+		this.load.audio('sfx-cannon-shoot', './assets/sfx/shoot1.wav');
+		this.load.audio('sfx-cannon-hit',   './assets/sfx/thud.wav');
+		this.load.audio('sfx-cannon-target','./assets/sfx/confirm.wav');
+		this.load.audio('sfx-tile-place',   './assets/sfx/blockplace.wav');
+		this.load.audio('sfx-tile-pickup',  './assets/sfx/newdelete.wav');
+		this.load.audio('sfx-tile-deny',    './assets/sfx/denied.wav');
+		this.load.audio('sfx-fluff-appear', './assets/sfx/laser.ogg');
+		this.load.audio('sfx-fluff-shake',  './assets/sfx/lose.wav');
+		this.load.audio('sfx-fluff-throw',  './assets/sfx/jump1.wav');
 	}
 	
 	create () {

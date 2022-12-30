@@ -65,7 +65,7 @@ It reminds me of someone...
 <p>`,
 		tesselation: TESSELATIONS.HEXAGONAL.name,
 		towers: [{ 
-			pos: { x: SCREENW - 150, y: SCREENH - 150 },
+			pos: { x: SCREENW - 150, y: 200 },
 			period: 1100,
 			range: 1000,
 			bullets: [

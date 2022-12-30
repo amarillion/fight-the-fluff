@@ -164,7 +164,7 @@ export class Game extends Phaser.Scene {
 
 		IsoPhysics.overlap(this.bananas, this.bullets, 
 			//TODO: explosion... 
-			(a, b) => { a.destroy(); b.destroy(); }
+			(a, b) => { a.destroy(); b.destroy(); this.playEffect('sfx-cannon-hit'); }
 		);
 	}
 
@@ -353,8 +353,11 @@ export class Game extends Phaser.Scene {
 			node.scorchMark = sprite; // already mark node so it can't be picked up.
 			setTimeout(() => { 
 				node.scorch(); 
-				this.checkPath(); 
+				this.checkPath();
 			}, LASER_WARMUP);
+			setTimeout(() => {
+				this.playEffect('sfx-laser');
+			});
 		}
 	}
 
@@ -375,6 +378,7 @@ export class Game extends Phaser.Scene {
 				const sprite = new Fluff({scene: this, node});
 				this.spriteLayer.add(sprite);
 				this.fluffs.add(sprite);
+				this.playEffect('sfx-fluff-appear');
 			}
 		}
 		while (this.fluffs.children.size < minimum);
@@ -421,7 +425,8 @@ export class Game extends Phaser.Scene {
 			node.yco - tile.origin.y + tile.center.y
 		);
 		img.setDisplayOrigin(tile.center.x, tile.center.y);
-		
+	
+		this.playEffect('sfx-fluff-shake');
 		this.tweens.add({
 			targets: [ img, scorchMark ],
 			duration: 1000,
@@ -432,6 +437,7 @@ export class Game extends Phaser.Scene {
 
 		node.tile = null;
 		node.tileImg = null;
+		node.scorchMark = null;
 		node.destroyed = true;
 	}
 
@@ -454,13 +460,28 @@ export class Game extends Phaser.Scene {
 		this.uiLayer.add(this.draggableTile);
 	}
 
+	sounds: Record<string, Phaser.Sound.BaseSound> = {};
+
 	create() {
 		this.input.keyboard.on('keydown', (evt: { key: string }) => {
 			this.keyCombo.onKeyPress(evt.key);
 		});
 		
 		this.addReusableAnimations();
-		
+
+		this.sounds['sfx-laser'        ] = this.game.sound.add('sfx-laser'        );
+		this.sounds['sfx-banana-spawn' ] = this.game.sound.add('sfx-banana-spawn' );
+		this.sounds['sfx-banana-tower' ] = this.game.sound.add('sfx-banana-tower' );
+		this.sounds['sfx-cannon-shoot' ] = this.game.sound.add('sfx-cannon-shoot' );
+		this.sounds['sfx-cannon-hit'   ] = this.game.sound.add('sfx-cannon-hit'   );
+		this.sounds['sfx-cannon-target'] = this.game.sound.add('sfx-cannon-target');
+		this.sounds['sfx-tile-place'   ] = this.game.sound.add('sfx-tile-place'   );
+		this.sounds['sfx-tile-pickup'  ] = this.game.sound.add('sfx-tile-pickup'  );
+		this.sounds['sfx-tile-deny'    ] = this.game.sound.add('sfx-tile-deny'    );
+		this.sounds['sfx-fluff-shake'  ] = this.game.sound.add('sfx-fluff-shake'  );
+		this.sounds['sfx-fluff-appear' ] = this.game.sound.add('sfx-fluff-appear' );
+		this.sounds['sfx-fluff-throw'  ] = this.game.sound.add('sfx-fluff-throw'  );
+
 		// make tile variants
 		this.level = 0;
 		this.uiBlocked = false;
@@ -483,6 +504,16 @@ export class Game extends Phaser.Scene {
 	}
 
 	dragTarget : Draggable;
+
+	playEffect(name: string) {
+		const sound = this.sounds[name];
+		if (sound) {
+			sound.play();
+		}
+		else {
+			console.error(`sfx ${name} not found`);
+		}
+	}
 
 	controlContains(pos : Point) {
 		/**
@@ -532,10 +563,14 @@ export class Game extends Phaser.Scene {
 		// TODO check if press is maintained at least 100 msec...
 		if (node && node.tile) {
 			// TODO: remove any pre-existing draggable tiles...
-			if (node !== this.startNode &&
-				node !== this.endNode &&
-				!node.scorchMark
+			if (node === this.startNode ||
+				node === this.endNode ||
+				node.destroyed
 			) {
+				this.playEffect('sfx-tile-deny');
+			}
+			else {
+				this.playEffect('sfx-tile-pickup');
 				this.draggableTile = new DraggableTile({
 					scene: this, 
 					x: pointer.x,

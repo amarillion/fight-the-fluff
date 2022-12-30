@@ -104,7 +104,7 @@ export default class extends RotatingTileMixin(Phaser.GameObjects.Sprite) {
 				this.destroy();
 			}
 		});
-
+		scene.playEffect('sfx-tile-place');
 	}
 
 	dragRelease(/* pointer */) {
