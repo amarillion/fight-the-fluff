@@ -346,19 +346,17 @@ export class Game extends Phaser.Scene {
 	doLaser() {
 		// pick a tile at random
 		const cell = this.grid.randomCell();
-		const node = pickOne(cell.nodes.filter(n => !n.scorchMark));
-		if (!node) return;
-		if (node.isStartNode) return;
-		if (node.isEndNode) return;
-		if (node.tile) {
+		const node = pickOne(cell.nodes.filter(n => (n.tile && !n.isStartNode && !n.isEndNode && !n.scorched)));
+		if (node && node.tile) {
 			const sprite = new Phaser.GameObjects.Sprite(this, node.cx, node.cy, 'laser-spritesheet');
 			sprite.setOrigin(0.5, 0.97);
 			sprite.play('laser');
 			this.tileLayer.add(sprite);
 			
 			node.scorchMark = sprite; // already mark node so it can't be picked up.
+			node.scorched = true;
 			setTimeout(() => { 
-				node.scorch(); 
+				node.tile = null; // removes connections. 
 				this.checkPath();
 			}, LASER_WARMUP);
 			setTimeout(() => {
@@ -421,6 +419,7 @@ export class Game extends Phaser.Scene {
 
 		const img = node.tileImg;
 		const scorchMark = node.scorchMark;
+		if (scorchMark) { scorchMark.destroy(); }
 		const tile = node.tile;
 		
 		if (!tile || !img) return; // already destroyed by something else....

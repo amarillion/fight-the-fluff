@@ -54,14 +54,6 @@ export class Node {
 		return !this.scorched && !this.isEndNode && !this.isStartNode;
 	}
 
-	scorch() {
-		// if tile was deleted in between, don't save scorchmark
-		if(this.scorched) { this.scorchMark.destroy(); }
-		
-		// transfer scorchMark to node
-		this.links = [];
-	}
-
 	toString() {
 		return `unit [${this.mx} ${this.my}] index: ${this.idx}`;
 	}
