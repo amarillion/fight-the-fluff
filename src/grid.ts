@@ -16,7 +16,7 @@ export class Node {
 	cx: number;
 	cy: number;
 	element: PrimitiveUnitPart;
-	links: Node[];
+	links: Map<number, Node>;
 	delegate: { isFilled: boolean };
 	tile: Tile;
 	tileImg: Phaser.GameObjects.Image;
@@ -47,7 +47,7 @@ export class Node {
 		this.cx = this.points.reduce((prev, cur) => prev + cur.x, 0) / this.points.length;
 		this.cy = this.points.reduce((prev, cur) => prev + cur.y, 0) / this.points.length;
 		this.element = element;
-		this.links = [];
+		this.links = new Map<number, Node>;
 	}
 
 	canPickUp() {
@@ -59,7 +59,7 @@ export class Node {
 	}
 
 	static getLinks(node : Node) {
-		return Object.entries(node.links);
+		return node.links.entries();
 	}
 
 	static *getAdjacent(node : Node) {
@@ -73,12 +73,14 @@ export class Node {
 		}
 	}
 
-	static *getExits(node : Node) {
+	static *getExits(node : Node) : Iterable<[number, Node]> {
 		const connectionMask = node.tile && node.tile.connectionMask || 0;
 		let bit = 1;
-		for (const link of Node.getLinks(node)) {
+		// assuming maximum 6 sides...
+		for (let i = 0; i < 6; ++i) {
 			if ((connectionMask & bit) > 0) {
-				yield link;
+				const otherNode = node.links.get(i);
+				if (otherNode) yield [i, otherNode];
 			}
 			bit *= 2;
 		}
@@ -145,12 +147,14 @@ export class Grid extends TemplateGrid<Unit> {
 			for (let l = 0; l < linksTemplate.length; ++l) {
 				const node = unit.nodes[l];
 				if (!node) continue;
+				let dir = -1;
 				for (const { dx, dy, idx } of linksTemplate[l]) {
+					dir++;
 					const nx = mx + dx, ny = my + dy;
 					const targetUnit = this.get(nx, ny);
 					if (!targetUnit) continue;
 					const targetNode = targetUnit.nodes[idx];
-					node.links.push(targetNode);
+					node.links.set(dir, targetNode);
 					// console.log(`linked ${node} to ${targetNode}`);
 				}
 			}

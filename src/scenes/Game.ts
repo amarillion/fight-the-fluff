@@ -153,8 +153,10 @@ export class Game extends Phaser.Scene {
 			this.maxScore += c2.hp;
 		}
 
-		const laserInterval = new IntervalTimer(levelData.laserPeriod, () => this.doLaser());
-		this.intervals.push(laserInterval);
+		if (levelData.laserPeriod) {
+			const laserInterval = new IntervalTimer(levelData.laserPeriod, () => this.doLaser());
+			this.intervals.push(laserInterval);
+		}
 
 		const fluffInterval = new IntervalTimer(levelData.fluffPeriod, () => this.spawnFluff());
 		this.intervals.push(fluffInterval);
@@ -334,19 +336,19 @@ export class Game extends Phaser.Scene {
 
 	debugNode(node: Node) {
 		// LOG DEBUGGING INFO
-		console.log(node);
-		let exitIdx = 0;
-		for (const exit of Node.getExits(node)) {
-			const otherNode = exit[1];
-			let msg = `Exit ${exitIdx} dir: ${exit[0]} node: ${exit[1]} => `;
-			for (const returns of Node.getExits(otherNode)) {
-				if (returns[1] === node) {
-					msg += ` return found`;
-				}
-			}
-			exitIdx++;
-			console.log(msg);
-		}		
+		console.log(node.mx, node.my, [...node.links.entries()].map(l => `${l[0]}: ${l[1].mx}, ${l[1].my}`));
+		// let exitIdx = 0;
+		// for (const exit of Node.getExits(node)) {
+		// 	const otherNode = exit[1];
+		// 	let msg = `Exit ${exitIdx} dir: ${exit[0]} node: ${exit[1]} => `;
+		// 	for (const returns of Node.getExits(otherNode)) {
+		// 		if (returns[1] === node) {
+		// 			msg += ` return found`;
+		// 		}
+		// 	}
+		// 	exitIdx++;
+		// 	console.log(msg);
+		// }		
 	}
 
 	addMob() {

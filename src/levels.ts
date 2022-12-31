@@ -80,7 +80,7 @@ export const LEVELDATA: ((i: number) => LevelDataType)[] = [
 			range: 1200 + (i * 20),
 			bullets: [ { type: 'fixed', 'dir': 270 }, { type: 'fixed', 'dir': 180 } ],
 		}],
-		laserPeriod: i === 0 ? 100000 : 12000 - (i * 200),
+		laserPeriod: i === 0 ? 0 : 12000 - (i * 200),
 		fluffPeriod: 4000 - (i * 50),
 		startPos: { x: 150, y: 150},
 	}), 

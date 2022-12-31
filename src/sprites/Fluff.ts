@@ -110,7 +110,7 @@ export class Fluff extends MapSprite {
 	}
 
 	dragRelease(pointer: Point) {
-		const destNode = this.scene.findNodeAt(pointer.x, pointer.y);
+		const destNode = this.scene?.findNodeAt(pointer.x, pointer.y);
 		if (!(destNode && destNode.tile)) {
 			this.dragCancel();
 		}
