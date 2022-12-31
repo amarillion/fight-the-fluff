@@ -96,7 +96,7 @@ export const LEVELDATA: ((i: number) => LevelDataType)[] = [
 				{ type: 'fixed', dir: 300, phase: 300 }
 			],
 		}],
-		laserPeriod: 11000 - (i * 200),
+		laserPeriod: 12000 - (i * 200),
 		fluffPeriod: 3000 - (i * 40),
 		startPos: { x: 150, y: 150 },
 	}), 
@@ -114,13 +114,18 @@ export const LEVELDATA: ((i: number) => LevelDataType)[] = [
 			pos: { x: SCREENW - 150, y: SCREENH - 150 },
 			bullets: [ { type: 'fixed', dir: 210 }, /*{ type: 'aim', phase: 200 }*/ ],
 		}], 
-		laserPeriod: 10000 - (i * 200), 
+		laserPeriod: 12000 - (i * 200), 
 		fluffPeriod: 2000 - (i * 100),
 		startPos: { x: 400, y: 150},
 	}), 
 	(i) => ({ // 3
 		tesselation: TESSELATIONS.CAIRO.name,
-		towers: [{
+		towers: i <= 5 ? [{
+			period: 1400 - (i * 20),
+			range: 1000,
+			pos: { x: SCREENW - 200, y: SCREENH - 150 },
+			bullets: [ {type: 'fixed', dir: 210 }, { type: 'fixed', dir: 150 } ],
+		}] : [{
 			period: 1400 - (i * 20),
 			range: 1000,
 			pos: { x: SCREENW - 150, y: SCREENH - 150 },
@@ -137,24 +142,34 @@ export const LEVELDATA: ((i: number) => LevelDataType)[] = [
 	}), 
 	(i) => ({ // 4
 		tesselation: TESSELATIONS.DIAMOND.name,
-		towers: [{
-			period: 1400 - (i * 20),
+		towers: i <= 5 ? [{
+			period: 2000 - (i * 20),
 			range: 1000,
 			pos: { x: 100, y: 100 },
 			bullets: [ { type: 'aim' } ],
 		}, {
-			period: 1400 - (i * 20),
+			period: 2000 - (i * 20),
+			range: 1000,
+			pos: { x: SCREENW - 100, y: 100 },
+			bullets: [ { type: 'aim' } ],
+		}] : [{
+			period: 2000 - (i * 20),
+			range: 1000,
+			pos: { x: 100, y: 100 },
+			bullets: [ { type: 'aim' } ],
+		}, {
+			period: 2000 - (i * 20),
 			range: 1000,
 			pos: { x: 400, y: 100 },
 			bullets: [ {type: 'fixed', dir: 150 }, {type: 'fixed', dir: 30 }, ],
 		}, {
-			period: 1400 - (i * 20),
+			period: 2000 - (i * 20),
 			range: 1000,
 			pos: { x: SCREENW - 100, y: 100 },
 			bullets: [ { type: 'aim' } ],
 		}], 
-		laserPeriod: 16000 - (i * 200), 
-		fluffPeriod: 4000 - (i * 100),
+		laserPeriod: 18000 - (i * 200), 
+		fluffPeriod: 3000 - (i * 100),
 		startPos: { x: 400, y: SCREENH-100 },
 	})
 ];
