@@ -11,7 +11,7 @@ import { SCALE, SCREENH, SCREENW } from '../constants.js';
 import { ProgressBar } from '../sprites/progress-bar.js';
 import DraggableTile, { Draggable } from '../sprites/DraggableTile.js';
 import { openDialog } from '../components/Dialog.js';
-import { LEVELDATA, LevelDataType } from '../levels.js';
+import { DIALOGS, LEVELDATA, LevelDataType } from '../levels.js';
 import { Tower } from '../sprites/Tower.js';
 import { StartGate } from '../sprites/StartGate.js';
 import { Point } from '../util/point.js';
@@ -280,12 +280,11 @@ export class Game extends Phaser.Scene {
 
 		assert(this.startNode !== null);
 
-		if (levelData.dialog) {
-			this.uiBlocked = true;
-			openDialog(levelData.dialog, () => {
-				this.uiBlocked = false;
-			});
-		}
+		const dialog = DIALOGS[this.level] || '';
+		this.uiBlocked = true;
+		openDialog(`<h1>LEVEL ${this.level+1}</h1>${dialog}`, () => {
+			this.uiBlocked = false;
+		});
 
 		// destroys any physics bodies with setCollideWorldBounds(true) AND onWorldBounds = true
 		this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body) => {
