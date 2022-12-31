@@ -1,10 +1,12 @@
+# Fight the fluff
+
 # KrampusHack '22
 
-Additional code and graphics for KrampusHack by Amarillion. See below for credits of the original game.
+This adaption was created for KrampusHack 2022 by Amarillion. See below for credits of the original game.
 
-I created this game for Jomp! Jomp asked for a Tower Defence game.
-But, to turn this around, I created a \reverse\ tower defence game. In actual fact,
-you have to attack a tower, using exploding bananas.
+This submission was created for Jomp. Happy Holidays Jomp!
+
+Jomp asked for a Tower Defence game. But, turning this around, I created a \reverse\ tower defence game. In actual fact, you have to attack a tower, using exploding bananas.
 
 Here are some of the features that have been added:
 * Sound effects.
@@ -13,6 +15,8 @@ Here are some of the features that have been added:
 * More graphics.
 
 Unfortunately, due to time constraint I didn't manage to add additional tesselation types, that will have to wait for some future game jam. Also, there are still a few outstanding bugs that I unfortunately haven't found the time to fix.
+
+See the [submission page] https://tins.amarillion.org/entry/277/
 
 This is an extension of our TINS 2021 entry, see below for more information about that.
 
@@ -39,6 +43,10 @@ still get rid of them by dragging a fluff on top.
 Each level has a different geometry.
 
 The sequence of levels loops around with ever increasing difficulty. How far can you reach?
+
+# Source code
+
+
 
 # Tins '21
 
