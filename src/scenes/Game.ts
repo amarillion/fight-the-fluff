@@ -1,6 +1,6 @@
 import { Grid, Node, Unit } from '../grid.js';
 import Phaser from 'phaser';
-import { pickOne } from '@amarillion/helixgraph/lib/random.js';
+import { pickOne, randomInt } from '@amarillion/helixgraph/lib/random.js';
 import { assert } from '@amarillion/helixgraph/lib/assert.js';
 import { Fluff } from '../sprites/Fluff.js';
 import { Banana } from '../sprites/Banana.js';
@@ -57,6 +57,7 @@ function initGrid(tesselation: TesselationType) {
 export class Game extends Phaser.Scene {
 
 	spriteLayer : Phaser.GameObjects.Layer;
+	cloudLayer: Phaser.GameObjects.Layer;
 	bgLayer: Phaser.GameObjects.Layer;
 	tileLayer: Phaser.GameObjects.Layer;
 	uiLayer: Phaser.GameObjects.Layer;
@@ -245,6 +246,8 @@ export class Game extends Phaser.Scene {
 		this.children.removeAll();
 		this.intervals = [];
 
+		this.cloudLayer = this.add.layer();
+		this.cloudLayer.setDepth(-1);
 		this.bgLayer = this.add.layer();
 		this.bgLayer.setDepth(0);
 		this.tileLayer = this.add.layer();
@@ -287,9 +290,23 @@ export class Game extends Phaser.Scene {
 		// destroys any physics bodies with setCollideWorldBounds(true) AND onWorldBounds = true
 		this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body) => {
 			const sprite = body.gameObject as  Phaser.GameObjects.Sprite;
-			console.log('Destroying sprite', sprite);
 			sprite.destroy();
 		});
+
+		const cloudInterval = new IntervalTimer(2000, () => this.doCloud());
+		this.intervals.push(cloudInterval);
+	}
+
+	doCloud() {
+		const cloud = new Phaser.GameObjects.Image(this, SCREENW + 10, randomInt(SCREENH), 'cloud');
+		this.cloudLayer.add(cloud);
+		this.tweens.add({
+			targets: [ cloud ],
+			x: - 10,
+			duration: 10000,
+			onComplete: () => { cloud.destroy(); }
+		});
+
 	}
 
 	advanceToNextLevel() {
