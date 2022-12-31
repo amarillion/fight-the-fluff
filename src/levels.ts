@@ -23,23 +23,22 @@ After years of adventuring in deep space,
 Fole and Raul are ready to return home.
 </p>
 <p>
-All they have to now, is load up their precious cargo.
-The flowers are already in the ship...
-</p>
-<p>
-They are ready to move a load of bananas.
 But wait, what's that?
+There are indiginous life forms here.
+They are fluffy. And they are attacking!
 </p>
 <p>
-There are indiginous life forms here.
-They are fluffy.
-And they sure love bananas!
+They have no choice but to use their <b>exploding bananas</b> to blow up their defensive towers.
 </p>
 <h2>How to play</h2>
-DRAG your tile from the TOP-RIGHT corner.
-ROTATE before you drag, by clicking the L or R buttons.
+<b>DRAG your tile from the <b>TOP-RIGHT</b> corner.
+<b>ROTATE</b> before you drag, by clicking the <b>L</b> or <b>R</b> buttons.
 Create a path, but be careful that the fluffs don't sabotage it.
-If the fluffs get too annoying, DRAG them away.
+If the fluffs get too annoying, <b>DRAG</b> them away.
+<p>
+When a tile gets <b>SCORCHED</b> by a laser, you can't use it anymore.
+<b>DRAG</b> one of the fluffs on top to get rid of it!
+</p>
 `,
 		tesselation: TESSELATIONS.SQUARE.name,
 		towers: [{ 
@@ -48,7 +47,7 @@ If the fluffs get too annoying, DRAG them away.
 			range: 1200 + (i * 20),
 			bullets: [ { type: 'fixed', 'dir': 270 }, { type: 'fixed', 'dir': 180 } ],
 		}],
-		laserPeriod: 12000 - (i * 200),
+		laserPeriod: i === 0 ? 100000 : 12000 - (i * 200),
 		fluffPeriod: 4000 - (i * 50),
 		startPos: { x: 150, y: 150},
 	}), 
@@ -57,7 +56,7 @@ If the fluffs get too annoying, DRAG them away.
 <h2>Intermission</h2>
 <p>
 Boy, the geometry of this place is weird, isn't it?
-It reminds me of someone...
+It reminds me of creative coding. Or maybe a Dutch artist with a love for optical illusions...
 <p>`,
 		tesselation: TESSELATIONS.HEXAGONAL.name,
 		towers: [{ 
@@ -118,10 +117,10 @@ It reminds me of someone...
 	(i) => ({ // 4
 		tesselation: TESSELATIONS.DIAMOND.name,
 		dialog: `<h2>SHAMELESS PLUG</h2>
-		<p>Did you enjoy TINS?</p>
+		<p>Did you enjoy KrampusHack?</p>
 		<p>
-		Join <a href="https://tins.amarillion.org/">KrampusHack</a> this December, 
-		a relaxed, secret-santa-style Game Jam by the origanizers of TINS
+		Join <a href="https://tins.amarillion.org/">TINS</a> this Summer, 
+		an intense, 72h Game Jam by the origanizers of KrampusHack
 		where you make a game as a gift for somebody else.
 		</p>
 		`,
