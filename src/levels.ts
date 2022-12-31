@@ -30,6 +30,7 @@ export const DIALOGS = [
 	<h2>How to play</h2>
 	<b>DRAG</b> your tile from the <b>TOP-RIGHT</b> corner.
 	<b>ROTATE</b> before you drag, by clicking the <b>L</b> or <b>R</b> buttons.
+	Tiles can be picked up and moved.
 	Create a path, but be careful that the fluffs don't sabotage it.
 	If the fluffs get too annoying, <b>DRAG</b> them away.
 	<p>
@@ -123,10 +124,15 @@ export const LEVELDATA: ((i: number) => LevelDataType)[] = [
 			period: 1400 - (i * 20),
 			range: 1000,
 			pos: { x: SCREENW - 150, y: SCREENH - 150 },
+			bullets: [ {type: 'fixed', dir: 210 }, { type: 'fixed', dir: 150 } ],
+		}, {
+			period: 1400 - (i * 20),
+			range: 1000,
+			pos: { x: SCREENW - 150, y: 150 },
 			bullets: [ { type: 'aim' } ],
 		}], 
-		laserPeriod: 10000 - (i * 200), 
-		fluffPeriod: 2000 - (i * 100),
+		laserPeriod: 12000 - (i * 200), 
+		fluffPeriod: 4000 - (i * 100),
 		startPos: { x: 150, y: 150},
 	}), 
 	(i) => ({ // 4
@@ -134,11 +140,21 @@ export const LEVELDATA: ((i: number) => LevelDataType)[] = [
 		towers: [{
 			period: 1400 - (i * 20),
 			range: 1000,
-			pos: { x: SCREENW - 150, y: SCREENH - 150 },
+			pos: { x: 100, y: 100 },
+			bullets: [ { type: 'aim' } ],
+		}, {
+			period: 1400 - (i * 20),
+			range: 1000,
+			pos: { x: 400, y: 100 },
+			bullets: [ {type: 'fixed', dir: 150 }, {type: 'fixed', dir: 30 }, ],
+		}, {
+			period: 1400 - (i * 20),
+			range: 1000,
+			pos: { x: SCREENW - 100, y: 100 },
 			bullets: [ { type: 'aim' } ],
 		}], 
-		laserPeriod: 10000 - (i * 200), 
-		fluffPeriod: 2000 - (i * 100),
-		startPos: { x: 150, y: 150},
+		laserPeriod: 16000 - (i * 200), 
+		fluffPeriod: 4000 - (i * 100),
+		startPos: { x: 400, y: SCREENH-100 },
 	})
 ];
