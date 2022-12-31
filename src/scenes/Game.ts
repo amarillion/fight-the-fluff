@@ -185,25 +185,28 @@ export class Game extends Phaser.Scene {
 		if (this.draggableTile) this.draggableTile.rotateRight();
 	}
 
+	rotateButton1: Phaser.GameObjects.Text;
+	rotateButton2: Phaser.GameObjects.Text;
+
 	initUI() {
 		const control = new Phaser.GameObjects.Ellipse(this, SCREENW - (CONTROL_SIZE / 2), (CONTROL_SIZE / 2), CONTROL_SIZE - MARGIN, CONTROL_SIZE - MARGIN, 0x888888, 0.5);
 		control.setStrokeStyle(2.0, 0x000000);
 		this.control = control;
 		this.uiLayer.add(control);
 
-		const rotateButton1 = new Phaser.GameObjects.Text(this, 
+		this.rotateButton1 = new Phaser.GameObjects.Text(this, 
 			SCREENW - CONTROL_SIZE, CONTROL_SIZE, 
 			'[L]', { backgroundColor: '#00f', color: '#fff', fontSize: '32px' }
 		);
-		rotateButton1.setInteractive().on('pointerdown', () => this.onRotateLeft() );
-		this.uiLayer.add(rotateButton1);
+		this.rotateButton1.setInteractive().on('pointerdown', () => this.onRotateLeft() );
+		this.uiLayer.add(this.rotateButton1);
 
-		const rotateButton2 = new Phaser.GameObjects.Text(this, 
+		this.rotateButton2 = new Phaser.GameObjects.Text(this, 
 			SCREENW - 60, CONTROL_SIZE, 
 			'[R]', { backgroundColor: '#00f', color: '#fff', fontSize: '32px' }
 		);
-		rotateButton2.setInteractive().on('pointerdown', () => this.onRotateRight() );
-		this.uiLayer.add(rotateButton2);
+		this.rotateButton2.setInteractive().on('pointerdown', () => this.onRotateRight() );
+		this.uiLayer.add(this.rotateButton2);
 
 		this.progressbar = new ProgressBar({
 			scene: this, layer: this.uiLayer,
@@ -554,6 +557,14 @@ export class Game extends Phaser.Scene {
 
 	onDown(pointer: Phaser.Input.Pointer) {
 		if (this.uiBlocked) { return; }
+
+		const textContains = (text: Phaser.GameObjects.Text) => {
+			return pointer.x > text.x && pointer.x <= text.x + text.width &&
+				pointer.y > text.y && pointer.y <= text.y + text.height;
+		};
+		
+		if (textContains(this.rotateButton1)) return;
+		if (textContains(this.rotateButton2)) return;
 
 		const contains = this.controlContains(pointer);
 		if (contains) {
