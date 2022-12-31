@@ -18,10 +18,6 @@ export class Fluff extends MapSprite {
 	determineNextNode() {
 		const exits = Stream.of(Node.getExits(this.node)).map(v => v[1]).filter(n => n !== this.prevNode).collect();
 		
-		if(exits.length === 0) {
-			this.destroy();
-		}
-
 		return pickOne(exits);
 	}
 

@@ -356,7 +356,7 @@ export class Game extends Phaser.Scene {
 			node.scorchMark = sprite; // already mark node so it can't be picked up.
 			node.scorched = true;
 			setTimeout(() => { 
-				node.tile = null; // removes connections. 
+				node.tile = this.tileSet[0]; // removes connections. 
 				this.checkPath();
 			}, LASER_WARMUP);
 			setTimeout(() => {
