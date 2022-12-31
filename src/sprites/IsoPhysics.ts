@@ -68,16 +68,19 @@ export function IsometricMixin<TBase extends Constructor<Phaser.GameObjects.Spri
 */
 export class IsoPhysics {
 
+	static overlapSingle(aa: Phaser.GameObjects.Sprite, bb: Phaser.GameObjects.Sprite) {
+		return (aa.z === bb.z && !(aa.x > bb.x + bb.width ||
+			aa.y > bb.y + bb.height ||
+			bb.x > aa.x + aa.width ||
+			bb.y > aa.y + aa.height));
+	}
+
 	static overlap(a: Phaser.GameObjects.Group, b: Phaser.GameObjects.Group, 
 		onOverlap: (aa: Phaser.GameObjects.GameObject, bb: Phaser.GameObjects.GameObject) => void
 	) {
 		for (const aa of a.getChildren() as Phaser.GameObjects.Sprite[]) {
 			for (const bb of b.getChildren() as Phaser.GameObjects.Sprite[]) {
-				if (aa.z === bb.z && !(aa.x > bb.x + bb.width ||
-					aa.y > bb.y + bb.height ||
-					bb.x > aa.x + aa.width ||
-					bb.y > aa.y + aa.height)
-				) {
+				if (IsoPhysics.overlapSingle(aa, bb)) {
 					onOverlap(aa, bb);
 				}
 			}

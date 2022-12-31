@@ -3,6 +3,8 @@ import { pickOne } from '@amarillion/helixgraph/lib/random.js';
 import { ActionType, MapSprite } from './MapSprite.js';
 import { Node } from '../grid.js';
 import { Game } from '../scenes/Game.js';
+import { IsoPhysics } from './IsoPhysics.js';
+import { Tower } from './Tower.js';
 
 const STEPS = 40;
 
@@ -19,10 +21,12 @@ export class Banana extends MapSprite {
 
 	onNodeReached() {
 		this.prevPickedNodes.add(this.node);
-		if (this.node === this.scene.endNode) {
-			this.scene.endReached();
-			this.scene.playEffect('sfx-banana-tower');
-			this.destroy();
+		for (const tower of this.scene.towers.children.getArray()) {
+			if (IsoPhysics.overlapSingle(this, tower as Phaser.GameObjects.Sprite)) {
+				(tower as Tower).onHit();
+				this.scene.playEffect('sfx-banana-tower');
+				this.destroy();
+			}
 		}
 	}
 
@@ -46,7 +50,7 @@ export class Banana extends MapSprite {
 		}
 
 		// filter for paths that do not fall off a cliff
-		const exitsToTile = exits.filter(n => n.tile && !n.destroyed);
+		const exitsToTile = exits.filter(n => n.tile && !n.scorched);
 		if (exitsToTile.length > 0) {
 
 			// filter for paths that do not revisit old nodes

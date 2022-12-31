@@ -20,7 +20,9 @@ export class Node {
 	delegate: { isFilled: boolean };
 	tile: Tile;
 	tileImg: Phaser.GameObjects.Image;
-	destroyed = false;
+	scorched = false;
+	isEndNode = false;
+	isStartNode = false;
 	scorchMark: Phaser.GameObjects.Sprite;
 
 	constructor(
@@ -48,9 +50,13 @@ export class Node {
 		this.links = [];
 	}
 
+	canPickUp() {
+		return !this.scorched && !this.isEndNode && !this.isStartNode;
+	}
+
 	scorch() {
 		// if tile was deleted in between, don't save scorchmark
-		if(this.destroyed) { this.scorchMark.destroy(); }
+		if(this.scorched) { this.scorchMark.destroy(); }
 		
 		// transfer scorchMark to node
 		this.links = [];

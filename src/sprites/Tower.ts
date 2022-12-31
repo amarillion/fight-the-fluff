@@ -12,6 +12,7 @@ const BULLET_SPEED = 50.0; // TODO: bullet-dependent
 
 const CROSSHAIR_LEAD_PERIOD = 500;
 const CROSSHAIR_SHOOT_PERIOD = 500;
+const TOWER_MAX_HP = 20;
 
 export class CrossHair extends Phaser.GameObjects.Sprite {
 
@@ -54,6 +55,7 @@ export class Tower extends Phaser.GameObjects.Sprite {
 	private intervals: IntervalTimer[] = [];
 	private config: TowerConfigType;
 	private crosshair: Phaser.GameObjects.Sprite;
+	hp = TOWER_MAX_HP;
 
 	constructor(game: Game, node: Node, config: TowerConfigType) {
 		super(game, node.cx, node.cy, 'endgate');
@@ -78,6 +80,15 @@ export class Tower extends Phaser.GameObjects.Sprite {
 
 	preUpdate(time: number, delta: number) {
 		this.intervals.forEach(i => i.preUpdate(time, delta));
+	}
+
+	onHit() {
+		this.hp--;
+		if (this.hp === 0) {
+			this.game.playEffect('sfx-tower-destroyed');
+			this.destroy();
+		}
+		this.game.endReached();
 	}
 
 	doProjectile(bullet: BulletType) {

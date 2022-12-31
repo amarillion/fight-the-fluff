@@ -7,7 +7,7 @@ import { Banana } from '../sprites/Banana.js';
 import { TESSELATIONS, TesselationType } from '../tesselate.js';
 import { TILES, Tile } from '../tiles.js';
 import { drawTiles } from '../drawTiles.js';
-import { MAX_SCORE, SCALE, SCREENH, SCREENW } from '../constants.js';
+import { SCALE, SCREENH, SCREENW } from '../constants.js';
 import { ProgressBar } from '../sprites/progress-bar.js';
 import DraggableTile, { Draggable } from '../sprites/DraggableTile.js';
 import { openDialog } from '../components/Dialog.js';
@@ -63,15 +63,16 @@ export class Game extends Phaser.Scene {
 	fluffs: Phaser.GameObjects.Group;
 	bananas: Phaser.GameObjects.Group;
 	bullets: Phaser.GameObjects.Group;
+	towers: Phaser.GameObjects.Group;
 
 	score: number;
+	maxScore: number;
 	level: number;
 
 	grid: Grid;
 	tileSet: Tile[];
 	noDeadEnds: Tile[];
 	startNode: Node;
-	endNode: Node;
 	solution: Node[];
 	progressbar: ProgressBar;
 	control: Phaser.GameObjects.Ellipse;
@@ -134,16 +135,21 @@ export class Game extends Phaser.Scene {
 	}
 
 	initGates(levelData: LevelDataType) {
-		this.startNode = this.findNodeAt(150, 150);
+		this.startNode = this.findNodeAt(levelData.startPos.x, levelData.startPos.y);
+		this.startNode.isStartNode = true;
 		this.setTile(this.startNode, this.tileSet[this.tileSet.length - 1]);
 		const c1 = new StartGate(this, this.startNode);
 		this.spriteLayer.add(c1);
+		this.maxScore = 0;
 
 		for (const tower of levelData.towers) {
-			this.endNode = this.findNodeAt(tower.pos.x, tower.pos.y);
-			this.setTile(this.endNode, this.tileSet[this.tileSet.length - 1]);
-			const c2 = new Tower(this, this.endNode, tower);
+			const node = this.findNodeAt(tower.pos.x, tower.pos.y);
+			this.setTile(node, this.tileSet[this.tileSet.length - 1]);
+			node.isEndNode = true;
+			const c2 = new Tower(this, node, tower);
 			this.spriteLayer.add(c2);
+			this.towers.add(c2);
+			this.maxScore += c2.hp;
 		}
 
 		const laserInterval = new IntervalTimer(levelData.laserPeriod, () => this.doLaser());
@@ -251,9 +257,10 @@ export class Game extends Phaser.Scene {
 		this.fluffs = this.add.group();
 		this.bananas = this.add.group();
 		this.bullets = this.add.group();
-
+		this.towers = this.add.group();
+		
 		this.score = 0;
-		const levelData = LEVELDATA[this.level % LEVELDATA.length];
+		const levelData = LEVELDATA[this.level % LEVELDATA.length](this.level);
 		this.tesselation = TESSELATIONS[levelData.tesselation];
 
 		this.grid = initGrid(this.tesselation);
@@ -269,7 +276,6 @@ export class Game extends Phaser.Scene {
 		this.updateNextTile();
 
 		assert(this.startNode !== null);
-		assert(this.endNode !== null);
 
 		if (levelData.dialog) {
 			this.uiBlocked = true;
@@ -300,9 +306,9 @@ export class Game extends Phaser.Scene {
 
 	endReached() {
 		this.score++;
-		this.progressbar.refresh(this.score, MAX_SCORE);
+		this.progressbar.refresh(this.score, this.maxScore);
 
-		if (this.score === MAX_SCORE) {
+		if (this.score === this.maxScore) {
 			this.advanceToNextLevel();
 		}
 	}
@@ -342,8 +348,8 @@ export class Game extends Phaser.Scene {
 		const cell = this.grid.randomCell();
 		const node = pickOne(cell.nodes.filter(n => !n.scorchMark));
 		if (!node) return;
-		if (node === this.startNode) return;
-		if (node === this.endNode) return;
+		if (node.isStartNode) return;
+		if (node.isEndNode) return;
 		if (node.tile) {
 			const sprite = new Phaser.GameObjects.Sprite(this, node.cx, node.cy, 'laser-spritesheet');
 			sprite.setOrigin(0.5, 0.97);
@@ -366,8 +372,8 @@ export class Game extends Phaser.Scene {
 		// pick a random node
 
 		let minimum = 0;
-		if (this.score > MAX_SCORE * 0.5) minimum = 1;
-		if (this.score > MAX_SCORE * 0.8) minimum = 2;
+		if (this.score > this.maxScore * 0.5) minimum = 1;
+		if (this.score > this.maxScore * 0.8) minimum = 2;
 
 		do {
 			const cell = this.grid.randomCell();
@@ -404,14 +410,14 @@ export class Game extends Phaser.Scene {
 		img.setDisplayOrigin(tile.origin.x, tile.origin.y);
 		img.rotation = node.element.rotation;
 		node.tileImg = img;
-		node.destroyed = false;
+		node.scorched = false;
 		this.tileLayer.add(img);
 		this.checkPath();
 	}
 
 	destroyTile(node: Node) {
 		// can't destroy start or end!
-		if (node === this.startNode || node === this.endNode) return;
+		if (node.isStartNode || node.isEndNode) return;
 
 		const img = node.tileImg;
 		const scorchMark = node.scorchMark;
@@ -438,7 +444,7 @@ export class Game extends Phaser.Scene {
 		node.tile = null;
 		node.tileImg = null;
 		node.scorchMark = null;
-		node.destroyed = true;
+		node.scorched = true;
 	}
 
 	checkPath() {
@@ -481,6 +487,7 @@ export class Game extends Phaser.Scene {
 		this.sounds['sfx-fluff-shake'  ] = this.game.sound.add('sfx-fluff-shake'  );
 		this.sounds['sfx-fluff-appear' ] = this.game.sound.add('sfx-fluff-appear' );
 		this.sounds['sfx-fluff-throw'  ] = this.game.sound.add('sfx-fluff-throw'  );
+		this.sounds['sfx-tower-destroyed' ] = this.game.sound.add('sfx-tower-destroyed'  );
 
 		// make tile variants
 		this.level = 0;
@@ -563,9 +570,9 @@ export class Game extends Phaser.Scene {
 		// TODO check if press is maintained at least 100 msec...
 		if (node && node.tile) {
 			// TODO: remove any pre-existing draggable tiles...
-			if (node === this.startNode ||
-				node === this.endNode ||
-				node.destroyed
+			if (node.isStartNode ||
+				node.isEndNode ||
+				node.scorched
 			) {
 				this.playEffect('sfx-tile-deny');
 			}

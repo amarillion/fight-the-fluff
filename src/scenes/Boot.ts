@@ -31,6 +31,7 @@ export default class extends Phaser.Scene {
 		this.load.audio('sfx-fluff-appear', './assets/sfx/laser.ogg');
 		this.load.audio('sfx-fluff-shake',  './assets/sfx/lose.wav');
 		this.load.audio('sfx-fluff-throw',  './assets/sfx/jump1.wav');
+		this.load.audio('sfx-tower-destroyed',  './assets/sfx/expl04.wav');
 	}
 	
 	create () {

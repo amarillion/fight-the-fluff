@@ -39,7 +39,7 @@ export class Fluff extends MapSprite {
 		
 		const explodeChance = Math.min(0.5, this.actionCounter / 20);
 		if (Math.random() < explodeChance) {
-			if (this.node !== this.scene.startNode && this.node !== this.scene.endNode) {
+			if (!this.node.isStartNode && !this.node.isEndNode) {
 				return {
 					type: 'SHAKE',
 					time: STEPS * 3,
@@ -75,8 +75,8 @@ export class Fluff extends MapSprite {
 		if (!this.path.hasDestExit()) {
 			// we can't go further. 
 			// Two options: return or destroy...
-			if (this.node === this.scene.startNode ||
-				this.node === this.scene.endNode ||
+			if (this.node.isStartNode ||
+				this.node.isEndNode ||
 				Math.random() > 0.5) {
 				this.path.reverse();
 			}

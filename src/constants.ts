@@ -3,4 +3,3 @@ export const SCREENW = 800;
 export const SCREENH = SCREENW / ASPECT_RATIO;
 
 export const SCALE = 64;
-export const MAX_SCORE = 24;
