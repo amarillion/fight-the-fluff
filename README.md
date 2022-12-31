@@ -1,32 +1,56 @@
-# Tins 21
+# KrampusHack '22
 
-Entry for the TINS 2021 Game Jam, by Amarillion (code), OliviaGS (art) and Donall (music)
+Additional code and graphics for KrampusHack by Amarillion. See below for credits of the original game.
+
+I created this game for Jomp! Jomp asked for a Tower Defence game.
+But, to turn this around, I created a \reverse\ tower defence game. In actual fact,
+you have to attack a tower, using exploding bananas.
+
+Here are some of the features that have been added:
+* Sound effects.
+* Defensive towers that shoot canonballs, targetting rockets and lasers.
+* Tiles can be picked up and moved.
+* More graphics.
+
+Unfortunately, due to time constraint I didn't manage to add additional tesselation types, that will have to wait for some future game jam. Also, there are still a few outstanding bugs that I unfortunately haven't found the time to fix.
+
+This is an extension of our TINS 2021 entry, see below for more information about that.
+
+# Play online
+
+Open this link to [play online](https://amarillion.github.io/fight-the-fluff/) (latest version)
+
+(Use the QR code in the title screen to play on your iPad or cell phone)
+
+# How to play
+
+Create a path by dragging tiles from the space ship.
+You can click the L + R buttons (before dragging) to rotate a tile.
+
+The exploding bananas will appear from the space ship, and move along the path you created.
+If they reach a tower, they explode and deal damage. The goal of each level is to destroy all the towers, using the exploding bananas.
+
+Create a path, but be careful that the fluffs don't sabotage it.
+If the fluffs get too annoying, DRAG them away.
+
+The fluffs employ a powerful laser, that occasionally scorches a tile. These tiles are useless, but you can
+still get rid of them by dragging a fluff on top.
+
+Each level has a different geometry.
+
+The sequence of levels loops around with ever increasing difficulty. How far can you reach?
+
+# Tins '21
+
+Originally this was an entry for the TINS 2021 Game Jam, by Amarillion (code), OliviaGS (art) and Donall (music)
 
 The home of this game is
 
 https://tins.amarillion.org/entry/228/
 
-# Play online
+You can still play the original [TINS21 submission](https://amarillion.github.io/tins21/dist/).
 
-Open this link to [play online](https://amarillion.github.io/tins21/) (latest version)
-
-(Use the QR code in the title screen to play on your iPad or cell phone)
-
-The link above has some improvements since the original. For the curious, you can still play [older versions](https://amarillion.github.io/tins21/dist/).
-
-# How to play
-
-Create a path by dragging tiles from the top-right corner into the field.
-You can click the L + R buttons (before dragging) to rotate a tile.
-
-Create a path, but be careful that the fluffs don't sabotage it.
-If the fluffs get too annoying, DRAG them away.
-
-Each level has a different geometry.
-
-The goal of each level is to collect enough bananas.
-
-# Implementation of the rules
+## Implementation of the TINS '21 rules
 
 The last-minute special requirements for TINS 2021 were implemented as follows:
 
@@ -64,7 +88,7 @@ I did write some unit tests in jest, to fix some hard bugs related to tile rotat
 
 # Tech stack and code re-use
 
-Our tech stack is: JavaScript/TypeScript, Phaser 3, webpack for bundling, and jest for unit testing.
+Our tech stack is: TypeScript, Phaser 3, webpack for bundling, and jest for unit testing.
 
 This game is mostly written from scratch, but I did re-use some code snippets from a few previous game jam entries. For example, the dialog system comes from [ldjam46](https://github.com/amarillion/ldjam46/),
 and the menu comes from [ldjam47](https://github.com/amarillion/ldjam47/)
