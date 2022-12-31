@@ -28,14 +28,13 @@ Open this link to [play online](https://amarillion.github.io/fight-the-fluff/) (
 
 # How to play
 
-Create a path by dragging tiles from the space ship.
+Create a path by dragging tiles from the top-right corner.
 You can click the L + R buttons (before dragging) to rotate a tile.
 
 The exploding bananas will appear from the space ship, and move along the path you created.
-If they reach a tower, they explode and deal damage. The goal of each level is to destroy all the towers, using the exploding bananas.
+If they reach a tower, they explode and deal damage. The goal of each level is to destroy all the towers.
 
-Create a path, but be careful that the fluffs don't sabotage it.
-If the fluffs get too annoying, DRAG them away.
+Create a path, but be careful that the fluffs don't sabotage it. If the fluffs get too annoying, DRAG them away.
 
 The fluffs employ a powerful laser, that occasionally scorches a tile. These tiles are useless, but you can
 still get rid of them by dragging a fluff on top.
