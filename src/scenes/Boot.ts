@@ -19,6 +19,7 @@ export default class extends Phaser.Scene {
 		this.load.image('projectile', './assets/images/projectile.png');
 		this.load.audio('music', ['./assets/music/march_of_the_fluff.mp3']);
 
+		// NOTE! Do not use OGG, it fails on Mac/iOS, and Phaser doesn't give a useful error.
 		this.load.audio('sfx-laser',        './assets/sfx/Laser_Cannon-Mike_Koenig-797224747.wav');
 		this.load.audio('sfx-banana-spawn', './assets/sfx/connect.wav');
 		this.load.audio('sfx-banana-tower', './assets/sfx/explode3.wav');
@@ -28,7 +29,7 @@ export default class extends Phaser.Scene {
 		this.load.audio('sfx-tile-place',   './assets/sfx/blockplace.wav');
 		this.load.audio('sfx-tile-pickup',  './assets/sfx/newdelete.wav');
 		this.load.audio('sfx-tile-deny',    './assets/sfx/denied.wav');
-		this.load.audio('sfx-fluff-appear', './assets/sfx/laser.ogg');
+		this.load.audio('sfx-fluff-appear', './assets/sfx/laser.wav');
 		this.load.audio('sfx-fluff-shake',  './assets/sfx/lose.wav');
 		this.load.audio('sfx-fluff-throw',  './assets/sfx/jump1.wav');
 		this.load.audio('sfx-tower-destroyed',  './assets/sfx/expl04.wav');
